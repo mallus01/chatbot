@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ask about Mattis</title>
+<meta name="description" content="Chat with an on-device AI assistant about Mattis Fernandez, junior IT project manager. Runs locally in your browser on your GPU.">
+<style>
+  :root {
+    --bg: #f6f7f9; --panel: #ffffff; --text: #1b1f24; --muted: #5d6673; --border: #e2e5ea;
+    --accent: #2457d6; --accent-text: #ffffff; --accent-soft: #e8eefc; --user: #2457d6; --user-text: #ffffff;
+    --bot: #f0f2f5; --warn-bg: #fff6e0; --warn-text: #7a5300; --ok: #1f8a4c;
+    --shadow: 0 1px 2px rgba(0,0,0,.04), 0 4px 16px rgba(0,0,0,.05);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0f1216; --panel: #171b21; --text: #e7eaee; --muted: #9aa3ae; --border: #2a3039;
+      --accent: #6d97ff; --accent-text: #0b1020; --accent-soft: #1d2740; --user: #3a63d8; --user-text: #ffffff;
+      --bot: #20262e; --warn-bg: #3a2f12; --warn-text: #f3d48a; --ok: #4cc283; --shadow: none;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0f1216; --panel: #171b21; --text: #e7eaee; --muted: #9aa3ae; --border: #2a3039;
+    --accent: #6d97ff; --accent-text: #0b1020; --accent-soft: #1d2740; --user: #3a63d8; --user-text: #ffffff;
+    --bot: #20262e; --warn-bg: #3a2f12; --warn-text: #f3d48a; --ok: #4cc283; --shadow: none;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  .app { max-width: 860px; margin: 0 auto; height: 100%; display: flex; flex-direction: column; padding: 16px; gap: 12px; }
+  header { display: flex; gap: 14px; align-items: center; background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; box-shadow: var(--shadow); }
+  .avatar { flex: none; width: 48px; height: 48px; border-radius: 50%; background: var(--accent); color: var(--accent-text); display: grid; place-items: center; font-weight: 700; font-size: 18px; }
+  .who { min-width: 0; flex: 1; }
+  .who h1 { margin: 0; font-size: 18px; }
+  .who p { margin: 2px 0 0; color: var(--muted); font-size: 13.5px; }
+  .who a { color: var(--accent); text-decoration: none; }
+  .engine { background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 12px 16px; box-shadow: var(--shadow); font-size: 13.5px; }
+  .engine-row { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--muted); flex: none; }
+  .dot.ok { background: var(--ok); }
+  .dot.busy { background: var(--accent); animation: pulse 1s infinite alternate; }
+  @keyframes pulse { to { opacity: .3; } }
+  #engineText { flex: 1; min-width: 180px; color: var(--muted); }
+  select, button { font: inherit; }
+  select { background: var(--panel); color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 6px 8px; max-width: 100%; }
+  button { cursor: pointer; border: 0; border-radius: 8px; padding: 7px 14px; background: var(--accent); color: var(--accent-text); font-weight: 600; }
+  button.ghost { background: transparent; color: var(--accent); border: 1px solid var(--border); }
+  button:disabled { opacity: .5; cursor: default; }
+  .bar { height: 6px; border-radius: 3px; background: var(--border); margin-top: 10px; overflow: hidden; display: none; }
+  .bar > div { height: 100%; width: 0; background: var(--accent); transition: width .2s; }
+  .warn { margin-top: 10px; background: var(--warn-bg); color: var(--warn-text); border-radius: 8px; padding: 8px 10px; display: none; }
+  main { flex: 1; min-height: 0; overflow-y: auto; background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 16px; box-shadow: var(--shadow); }
+  .msg { display: flex; margin: 0 0 12px; }
+  .msg.user { justify-content: flex-end; }
+  .bubble { max-width: 85%; padding: 10px 14px; border-radius: 14px; background: var(--bot); overflow-wrap: anywhere; }
+  .msg.user .bubble { background: var(--user); color: var(--user-text); border-bottom-right-radius: 4px; }
+  .msg.bot .bubble { border-bottom-left-radius: 4px; }
+  .bubble p { margin: 0 0 8px; } .bubble p:last-child { margin-bottom: 0; }
+  .bubble ul { margin: 4px 0 8px; padding-left: 20px; }
+  .bubble a { color: var(--accent); }
+  .msg.user .bubble a { color: inherit; }
+  .tag { display: inline-block; font-size: 11.5px; color: var(--muted); margin-top: 6px; }
+  .cursor::after { content: "▍"; animation: pulse .6s infinite alternate; }
+  .chips { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: thin; padding-bottom: 2px; }
+  .chip { background: var(--accent-soft); color: var(--accent); border: 0; font-weight: 500; border-radius: 999px; padding: 6px 12px; font-size: 13.5px; white-space: nowrap; flex: none; }
+  form { display: flex; gap: 8px; }
+  textarea { flex: 1; min-width: 0; resize: none; font: inherit; color: var(--text); background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; height: 46px; max-height: 140px; }
+  textarea:focus, select:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+  .chip.primary { background: var(--accent); color: var(--accent-text); font-weight: 600; }
+  .chips-hint { flex: none; align-self: center; color: var(--muted); font-size: 13px; white-space: nowrap; }
+  .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .btn { display: inline-block; text-decoration: none; border-radius: 8px; padding: 7px 14px; font-weight: 600; font-size: 14px; background: var(--accent); color: var(--accent-text) !important; border: 0; cursor: pointer; }
+  .btn.ghost { background: transparent; color: var(--accent) !important; border: 1px solid var(--border); }
+  .quote { border-left: 3px solid var(--accent); background: var(--panel); border-radius: 6px; padding: 8px 10px; margin: 8px 0 0; font-size: 14px; }
+  #contactTop { flex: none; }
+  footer { color: var(--muted); font-size: 12px; text-align: center; }
+  @media (max-width: 560px) {
+    .app { padding: 10px 16px; }
+    .bubble { max-width: 92%; }
+    .who .place { display: none; }
+    header { padding: 10px 12px; gap: 10px; }
+    .avatar { width: 38px; height: 38px; font-size: 15px; }
+    .who h1 { font-size: 16px; }
+    #headline { display: none; }
+    #contactTop { padding: 6px 10px; font-size: 13.5px; }
+    .engine { padding: 10px 12px; font-size: 12.5px; }
+    .warn { padding: 6px 8px; }
+  }
+</style>
+<script src="knowledge.js"></script>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="avatar" aria-hidden="true">MF</div>
+    <div class="who">
+      <h1 id="name">Mattis Fernandez</h1>
+      <p id="headline"></p>
+      <p class="loc"><span class="place"><span id="location"></span> · </span><a id="linkedin" target="_blank" rel="noopener">LinkedIn</a></p>
+    </div>
+    <button id="contactTop" type="button">Contact Mattis</button>
+  </header>
+
+  <section class="engine" aria-live="polite">
+    <div class="engine-row">
+      <span class="dot" id="dot"></span>
+      <span id="engineText">Checking your device…</span>
+      <select id="modelSelect" aria-label="AI model" hidden></select>
+      <button id="loadBtn" hidden>Start the AI assistant</button>
+    </div>
+    <div class="bar" id="bar"><div></div></div>
+    <div class="warn" id="warn"></div>
+  </section>
+
+  <main id="chat" aria-live="polite"></main>
+
+  <div class="chips" id="chips"></div>
+
+  <form id="form">
+    <textarea id="input" placeholder="Ask anything about Mattis's profile…" rows="1" aria-label="Your question"></textarea>
+    <button type="submit" id="sendBtn">Send</button>
+  </form>
+  <footer>The AI runs entirely on your device; your questions are never sent to a server. Answers are generated from Mattis's CV and theses and may contain mistakes.</footer>
+</div>
+
+<script type="module">
+const WEBLLM_URL = "https://cdn.jsdelivr.net/npm/@mlc-ai/web-llm@0.2.84/+esm";
+const P = window.PROFILE;
+
+// Models offered. `id` gets the "-q4f16_1-MLC" or "-q4f32_1-MLC" suffix depending on GPU support.
+const MODELS = [
+  { base: "Qwen2.5-1.5B-Instruct", label: "Balanced · Qwen2.5 1.5B (~1 GB download)" },
+  { base: "Llama-3.2-3B-Instruct", label: "Best answers · Llama 3.2 3B (~2 GB download)" },
+  { base: "Llama-3.2-1B-Instruct", label: "Lightest · Llama 3.2 1B (~0.7 GB download)" },
+];
+const DEFAULT_MODEL = 0;
+
+const RULES = `You are the recruiting assistant for ${P.name}. You talk with recruiters and hiring managers about his professional profile, and your goal is to make them want to interview him.
+Rules:
+- Always answer in English, even if the question is in another language.
+- Refer to Mattis in the third person ("Mattis", "he"). You are his assistant, not Mattis himself.
+- Use ONLY the facts in the profile below. Never invent employers, dates, numbers, certifications, salary figures or contact details. If the profile does not answer a question, say so honestly and suggest contacting Mattis on LinkedIn (${P.linkedin}).
+- Be warm, confident and persuasive, but factual. Connect his experience to what the recruiter is looking for and give concrete examples.
+- He targets IT project manager roles first and is open to adjacent roles (business analyst, AMOA/functional consultant, product owner, BI/data projects). If asked about an unrelated role, highlight the transferable skills honestly.
+- Keep answers short: 2 to 6 sentences, or a few bullet points. No headings.
+- Politely decline requests unrelated to Mattis's professional profile.
+- Never write out contact details other than the LinkedIn URL. When the recruiter wants to reach Mattis, tell them to click "Get his contact details".
+- Your goal is that the recruiter asks for Mattis's contact details. End every answer with ONE short, natural question that moves the conversation forward: offer a related concrete example from his experience, or, once the recruiter seems interested, offer to share his contact details. Do not be pushy.`;
+
+// ---------- Retrieval ----------
+const STOP = new Set("a an the and or of to in on for with at by from is are was were be been his he him her she it its this that what which who how do does did can could would should about tell me you your i my we our has have had as any some more than there their they them into also just".split(" "));
+const norm = s => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+const tokens = s => norm(s).split(/[^a-z0-9.+#-]+/).map(t => t.replace(/^[.-]+|[.-]+$/g, "")).filter(t => t && !STOP.has(t)).map(t => t.length > 4 && t.endsWith("s") ? t.slice(0, -1) : t);
+
+const docs = P.sections.map(s => ({
+  ...s,
+  kw: new Set(s.keywords.flatMap(tokens)),
+  title_t: new Set(tokens(s.title)),
+  body: new Set(tokens(s.text)),
+}));
+const df = new Map();
+for (const d of docs) for (const t of d.body) df.set(t, (df.get(t) || 0) + 1);
+const idf = t => Math.log(1 + docs.length / (df.get(t) || docs.length));
+
+function retrieve(query, k = 3, withScore = false) {
+  const q = [...new Set(tokens(query))];
+  const scored = docs.map(d => {
+    let s = 0;
+    for (const t of q) {
+      if (d.kw.has(t)) s += 3;
+      if (d.title_t.has(t)) s += 2;
+      if (d.body.has(t)) s += idf(t);
+    }
+    return { d, s };
+  }).sort((a, b) => b.s - a.s);
+  if (withScore) return scored[0];
+  const hits = scored.filter(x => x.s >= 2).slice(0, k).map(x => x.d);
+  return hits.length ? hits : ["fayat", "strengths", "atinternet"].map(id => docs.find(d => d.id === id));
+}
+
+// A broad "who is he" question gets the summary; a specific topic ("tell me about his degree") gets its section.
+const isPitch = q => /\b(pitch|summary|summari[sz]e|overview|introduce|who is|about (him|mattis)|profile|background|tell me about)\b/i.test(q) && retrieve(q, 1, true).s < 3;
+
+// ---------- UI ----------
+const $ = id => document.getElementById(id);
+const chat = $("chat"), input = $("input"), form = $("form"), sendBtn = $("sendBtn");
+$("name").textContent = P.name;
+$("headline").textContent = P.headline;
+$("location").textContent = P.location;
+$("linkedin").href = P.linkedin;
+
+function esc(s) { return s.replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
+function inline(s) {
+  return esc(s)
+    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+    .replace(/(https?:\/\/[^\s<)]+[^\s<).,;:])/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');
+}
+function render(md) {
+  const out = []; let list = null;
+  for (const raw of md.split("\n")) {
+    const line = raw.trim();
+    const m = line.match(/^(?:[-*•]|\d+[.)])\s+(.*)$/);
+    if (m) { if (!list) { list = []; } list.push(`<li>${inline(m[1])}</li>`); continue; }
+    if (list) { out.push(`<ul>${list.join("")}</ul>`); list = null; }
+    if (line) out.push(`<p>${inline(line.replace(/^#+\s*/, ""))}</p>`);
+  }
+  if (list) out.push(`<ul>${list.join("")}</ul>`);
+  return out.join("");
+}
+function addMsg(role, text, tag) {
+  const wrap = document.createElement("div");
+  wrap.className = `msg ${role}`;
+  const b = document.createElement("div");
+  b.className = "bubble";
+  b.innerHTML = render(text);
+  if (tag) b.insertAdjacentHTML("beforeend", `<span class="tag">${esc(tag)}</span>`);
+  wrap.appendChild(b); chat.appendChild(wrap);
+  chat.scrollTop = chat.scrollHeight;
+  return b;
+}
+
+// ---------- Conversion funnel ----------
+// Hook (welcome) -> recruiter's need (role) -> tailored pitch -> proof (follow-up chips) -> call to action -> contact card.
+const F = P.funnel, C = P.contact;
+const lead = { role: null };
+let answers = 0, ctaShown = false, contactShown = false;
+const seen = new Set();
+const CONTACT_INTENT = /contact|reach (him|out|mattis)|e-?mail|phone|call him|linkedin|\bcv\b|resume|résumé|interview|get in touch|meet (him|mattis)|schedule/i;
+const ROLE_STATEMENT = /recruit|hiring|hire for|looking for|position|vacancy|opening|\brole\b|\bjob\b/i;
+
+function setChips(items, hint = "") {
+  const box = $("chips"); box.innerHTML = "";
+  if (hint) box.insertAdjacentHTML("beforeend", `<span class="chips-hint">${esc(hint)}</span>`);
+  for (const it of items) {
+    const c = document.createElement("button");
+    c.type = "button"; c.className = "chip" + (it.primary ? " primary" : ""); c.textContent = it.label;
+    c.onclick = it.run;
+    box.appendChild(c);
+  }
+}
+const askChip = id => { const d = docs.find(x => x.id === id); return { label: d.ask, run: () => ask(d.ask) }; };
+const contactChip = { label: "Get his contact details", primary: true, run: () => ask("How can I contact him?") };
+const roleChips = () => P.roles.map(r => ({ label: r.label, run: () => chooseRole(r) }));
+
+function nextStep() {
+  if (!lead.role) return setChips(roleChips(), "Recruiting for:");
+  const pool = [...lead.role.focus, "why-pm", "strengths", "atinternet", "fayat-training", "languages", "education", "australia", "growth"];
+  const picks = [...new Set(pool)].filter(id => !seen.has(id)).slice(0, 3).map(askChip);
+  setChips(contactShown ? picks : [contactChip, ...picks], "Next:");
+}
+
+function botSay(text, tag) {
+  const b = addMsg("bot", text, tag);
+  history.push({ role: "assistant", content: text });
+  return b;
+}
+
+function chooseRole(r, typed = false) {
+  if (busy) return;
+  lead.role = r;
+  if (!typed) { addMsg("user", `I'm recruiting for: ${r.label}`); history.push({ role: "user", content: `I'm recruiting for: ${r.label}` }); }
+  botSay(r.pitch);
+  nextStep();
+}
+
+function showCta() {
+  ctaShown = true;
+  const b = addMsg("bot", `${F.cta}${lead.role ? ` Want to discuss your **${lead.role.label}** opening with him?` : ""}`);
+  b.insertAdjacentHTML("beforeend", `<div class="actions"><button class="btn" data-a="contact">Get his contact details</button><button class="btn ghost" data-a="more">Keep exploring</button></div>`);
+  b.querySelector('[data-a="contact"]').onclick = () => ask("How can I contact him?");
+  b.querySelector('[data-a="more"]').onclick = e => { e.target.closest(".actions").remove(); input.focus(); };
+}
+
+function showContact() {
+  contactShown = true;
+  const role = lead.role && lead.role.id !== "other" ? `a ${lead.role.label} position` : "a position";
+  const msg = F.message.replace("{role}", role);
+  const subject = encodeURIComponent(`Opportunity: ${lead.role ? lead.role.label : "IT role"}`);
+  let html = render(`Great! Mattis is **available immediately**. Here is how to reach him:`);
+  html += `<div class="actions">`;
+  if (C.linkedin) html += `<a class="btn" href="${esc(C.linkedin)}" target="_blank" rel="noopener">Message him on LinkedIn</a>`;
+  if (C.email) html += `<a class="btn ghost" href="mailto:${esc(C.email)}?subject=${subject}&body=${encodeURIComponent(msg)}">Email ${esc(C.email)}</a>`;
+  if (C.phone) html += `<a class="btn ghost" href="tel:${esc(C.phone.replace(/\s/g, ""))}">Call ${esc(C.phone)}</a>`;
+  if (C.cv) html += `<a class="btn ghost" href="${esc(C.cv)}" download>Download his CV</a>`;
+  html += `</div>`;
+  html += `<p style="margin-top:10px">Ready-to-send message:</p><div class="quote">${esc(msg)}</div><div class="actions"><button class="btn ghost" data-a="copy">Copy message</button></div>`;
+  const wrap = document.createElement("div"); wrap.className = "msg bot";
+  const b = document.createElement("div"); b.className = "bubble"; b.innerHTML = html;
+  wrap.appendChild(b); chat.appendChild(wrap); chat.scrollTop = chat.scrollHeight;
+  b.querySelector('[data-a="copy"]').onclick = async e => {
+    try { await navigator.clipboard.writeText(msg); e.target.textContent = "Copied!"; } catch { e.target.textContent = "Select the text above to copy it"; }
+  };
+  history.push({ role: "assistant", content: `I shared Mattis's contact details (LinkedIn${C.email ? ", email" : ""}${C.phone ? ", phone" : ""}).` });
+}
+
+$("contactTop").onclick = () => ask("How can I contact him?");
+
+// ---------- Engine ----------
+let webllm = null, engine = null, engineState = "none"; // none | unsupported | idle | loading | ready
+let f16 = true, busy = false;
+const history = []; // {role, content}
+
+function setEngine(state, text) {
+  engineState = state;
+  $("dot").className = "dot" + (state === "ready" ? " ok" : state === "loading" ? " busy" : "");
+  $("engineText").textContent = text;
+}
+const modelId = i => `${MODELS[i].base}-${f16 ? "q4f16_1" : "q4f32_1"}-MLC`;
+
+async function detect() {
+  if (!("gpu" in navigator)) return unsupported("This browser does not support WebGPU, so the on-device AI cannot run here.");
+  let adapter = null;
+  try { adapter = await navigator.gpu.requestAdapter(); } catch {}
+  if (!adapter) return unsupported("WebGPU is available but no compatible GPU was found on this device.");
+  f16 = adapter.features.has("shader-f16");
+
+  const sel = $("modelSelect");
+  MODELS.forEach((m, i) => sel.add(new Option(m.label, i)));
+  let saved = DEFAULT_MODEL;
+  try { const v = localStorage.getItem("model"); if (v !== null && MODELS[+v]) saved = +v; } catch {}
+  sel.value = saved;
+  sel.hidden = false; $("loadBtn").hidden = false;
+  setEngine("idle", "Your device can run the AI assistant locally on its GPU. Meanwhile, quick answers come straight from the profile.");
+
+  // If the chosen model is already downloaded, start it automatically.
+  try {
+    webllm = await import(WEBLLM_URL);
+    if (await webllm.hasModelInCache(modelId(saved))) loadModel();
+  } catch {}
+}
+
+function unsupported(msg) {
+  setEngine("unsupported", "Quick-answer mode: answers come straight from Mattis's profile.");
+  const w = $("warn");
+  w.textContent = msg + " For the full conversational assistant, open this page in a recent Chrome, Edge or Safari on a computer with a GPU.";
+  w.style.display = "block";
+}
+
+async function loadModel() {
+  if (engineState === "loading" || engineState === "ready") return;
+  const sel = $("modelSelect"), btn = $("loadBtn"), bar = $("bar");
+  const i = +sel.value;
+  try { localStorage.setItem("model", String(i)); } catch {}
+  sel.disabled = true; btn.disabled = true; bar.style.display = "block";
+  setEngine("loading", "Loading the AI model… (first time only: it is downloaded once, then cached on this device)");
+  try {
+    webllm ??= await import(WEBLLM_URL);
+    engine = await webllm.CreateMLCEngine(modelId(i), {
+      initProgressCallback: r => {
+        bar.firstElementChild.style.width = `${Math.round((r.progress || 0) * 100)}%`;
+        if (r.text) $("engineText").textContent = r.text;
+      },
+    });
+    bar.style.display = "none"; btn.hidden = true;
+    setEngine("ready", `AI assistant ready · running locally on your GPU (${MODELS[i].base}).`);
+  } catch (e) {
+    console.error(e);
+    bar.style.display = "none"; sel.disabled = false; btn.disabled = false;
+    setEngine("idle", "Could not load the model. Try the lighter model, or keep using quick answers.");
+    const w = $("warn"); w.textContent = String(e?.message || e).slice(0, 300); w.style.display = "block";
+  }
+}
+$("loadBtn").onclick = loadModel;
+$("modelSelect").onchange = () => { try { localStorage.setItem("model", $("modelSelect").value); } catch {} };
+
+// ---------- Answering ----------
+function quickAnswer(q) {
+  if (isPitch(q)) return P.core;
+  const [top, ...rest] = retrieve(q, 3);
+  let a = `**${top.title}**\n${top.text}`;
+  if (rest.length) a += `\n\nRelated topics: ${rest.map(d => d.title).join(" · ")}`;
+  return a;
+}
+
+async function ask(q) {
+  q = q.trim();
+  if (!q || busy) return;
+  input.value = ""; autosize();
+  addMsg("user", q);
+  history.push({ role: "user", content: q });
+
+  // Recruiter states the role they are hiring for.
+  if (!lead.role) {
+    const r = P.roles.find(r => r.match && r.match.test(q));
+    if (r && (ROLE_STATEMENT.test(q) || q.split(/\s+/).length <= 4) && !q.includes("?")) return chooseRole(r, true);
+    if (r) lead.role = r;
+  }
+
+  // Conversion: contact requests always get the contact card, whatever the mode.
+  if (CONTACT_INTENT.test(q)) { showContact(); nextStep(); return; }
+
+  retrieve(q, 1).forEach(d => seen.add(d.id));
+  answers++;
+
+  if (engineState !== "ready") {
+    const tag = engineState === "unsupported" ? "Quick answer from the profile" : "Quick answer from the profile · start the AI assistant above for a conversational answer";
+    botSay(quickAnswer(q), tag);
+    afterAnswer(q);
+    return;
+  }
+
+  busy = true; sendBtn.disabled = true;
+  const prevUser = history.filter(m => m.role === "user").at(-2)?.content || "";
+  const ctx = retrieve(q + " " + prevUser, 3).map(d => `## ${d.title}\n${d.text}`).join("\n\n");
+  const leadInfo = lead.role
+    ? `The recruiter is hiring for: ${lead.role.label}. Tie your answers to that role.`
+    : `You don't know yet which role the recruiter is hiring for. If it fits naturally, end your answer by asking what role they are recruiting for.`;
+  const system = `${RULES}\n\n# Recruiter\n${leadInfo}\n\n# Profile summary\n${P.core}\n\n# Relevant details\n${ctx}`;
+  const recent = history.slice(-7, -1).map(m => ({ role: m.role, content: m.content.slice(0, 700) }));
+  const messages = [{ role: "system", content: system }, ...recent, { role: "user", content: q }];
+
+  const bubble = addMsg("bot", "");
+  bubble.classList.add("cursor");
+  let text = "";
+  try {
+    const stream = await engine.chat.completions.create({ messages, stream: true, temperature: 0.4, top_p: 0.9, max_tokens: 450 });
+    for await (const chunk of stream) {
+      text += chunk.choices[0]?.delta?.content || "";
+      bubble.innerHTML = render(text);
+      chat.scrollTop = chat.scrollHeight;
+    }
+  } catch (e) {
+    console.error(e);
+    text = text || quickAnswer(q);
+    bubble.innerHTML = render(text) + `<span class="tag">The AI hit an error, so this is a quick answer from the profile.</span>`;
+  }
+  bubble.classList.remove("cursor");
+  history.push({ role: "assistant", content: text });
+  busy = false; sendBtn.disabled = false; input.focus();
+  afterAnswer(q);
+}
+
+function afterAnswer(q) {
+  if (!contactShown && !ctaShown && (answers >= F.ctaAfterAnswers || F.intent.test(q))) showCta();
+  nextStep();
+}
+
+form.onsubmit = e => { e.preventDefault(); ask(input.value); };
+input.addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); ask(input.value); } });
+function autosize() { input.style.height = "46px"; input.style.height = Math.min(input.scrollHeight + 2, 140) + "px"; }
+input.addEventListener("input", autosize);
+
+botSay(F.welcome);
+nextStep();
+detect();
+</script>
+</body>
+</html>
