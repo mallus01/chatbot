@@ -129,6 +129,12 @@
 <script type="module">
 const WEBLLM_URL = "https://cdn.jsdelivr.net/npm/@mlc-ai/web-llm@0.2.84/+esm";
 const P = window.PROFILE;
+if (!P) {
+  // Happens when index.html is opened on its own, e.g. straight from inside a ZIP without extracting it.
+  document.getElementById("engineText").textContent = "Profile data not found.";
+  document.getElementById("chat").innerHTML = `<div class="msg bot"><div class="bubble"><p><strong>knowledge.js could not be loaded.</strong></p><p>Keep <code>index.html</code> and <code>knowledge.js</code> in the same folder. If you downloaded a ZIP, extract it first (right-click › Extract all), then open <code>index.html</code> from the extracted folder.</p></div></div>`;
+  throw new Error("window.PROFILE missing: knowledge.js not loaded");
+}
 
 // Models offered. `id` gets the "-q4f16_1-MLC" or "-q4f32_1-MLC" suffix depending on GPU support.
 const MODELS = [
