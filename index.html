@@ -142,7 +142,34 @@ const MODELS = [
   { base: "Llama-3.2-3B-Instruct", label: "Best answers · Llama 3.2 3B (~2 GB download)" },
   { base: "Llama-3.2-1B-Instruct", label: "Lightest · Llama 3.2 1B (~0.7 GB download)" },
 ];
-const DEFAULT_MODEL = 0;
+const DEFAULT_MODEL = 0, LIGHTEST = 2;
+
+// Phones and low-memory devices: the browser kills the tab (and reloads the page) when the GPU runs out of memory,
+// so they only get the lightest model with a smaller context window.
+const IS_MOBILE = navigator.userAgentData?.mobile ?? /Android|iPhone|iPad|iPod|Mobi/i.test(navigator.userAgent);
+const LOW_MEM = IS_MOBILE || (navigator.deviceMemory || 8) <= 4;
+const OFFERED = LOW_MEM ? [LIGHTEST] : MODELS.map((_, i) => i);
+const CHAT_OPTS = LOW_MEM ? { context_window_size: 2048 } : undefined;
+const BUDGET = LOW_MEM ? { sections: 2, history: 2, maxTokens: 300 } : { sections: 3, history: 6, maxTokens: 450 };
+
+// Crash detection: a flag is set while the model loads or generates. If the page starts with the flag still set,
+// the previous attempt killed the tab.
+const BUSY_KEY = "aiBusy", CRASHED_KEY = "aiCrashed";
+const store = {
+  get: k => { try { return localStorage.getItem(k); } catch { return null; } },
+  set: (k, v) => { try { localStorage.setItem(k, v); } catch {} },
+  del: k => { try { localStorage.removeItem(k); } catch {} },
+};
+const markBusy = (stage, i) => store.set(BUSY_KEY, JSON.stringify({ stage, model: i, t: Date.now() }));
+const clearBusy = () => store.del(BUSY_KEY);
+function readCrash() {
+  let v = null;
+  try { v = JSON.parse(store.get(BUSY_KEY) || "null"); } catch {}
+  store.del(BUSY_KEY);
+  return v && Date.now() - v.t < 15 * 60 * 1000 ? v : null;
+}
+// Closing or leaving the page mid-answer is not a crash.
+addEventListener("pagehide", clearBusy);
 
 const RULES = `You are the recruiting assistant for ${P.name}. You talk with recruiters and hiring managers about his professional profile, and your goal is to make them want to interview him.
 Rules:
@@ -324,14 +351,30 @@ async function detect() {
   f16 = adapter.features.has("shader-f16");
 
   const sel = $("modelSelect");
-  MODELS.forEach((m, i) => sel.add(new Option(m.label, i)));
-  let saved = DEFAULT_MODEL;
-  try { const v = localStorage.getItem("model"); if (v !== null && MODELS[+v]) saved = +v; } catch {}
-  sel.value = saved;
-  sel.hidden = false; $("loadBtn").hidden = false;
-  setEngine("idle", "Your device can run the AI assistant locally on its GPU. Meanwhile, quick answers come straight from the profile.");
+  OFFERED.forEach(i => sel.add(new Option(MODELS[i].label, i)));
+  let saved = LOW_MEM ? LIGHTEST : DEFAULT_MODEL;
+  const v = store.get("model");
+  if (v !== null && OFFERED.includes(+v)) saved = +v;
 
-  // If the chosen model is already downloaded, start it automatically.
+  const crash = readCrash();
+  if (crash) {
+    store.set(CRASHED_KEY, "1");
+    if (crash.model !== LIGHTEST && OFFERED.includes(LIGHTEST)) saved = LIGHTEST;
+    const w = $("warn");
+    w.textContent = crash.model === LIGHTEST || LOW_MEM
+      ? "The AI assistant needed more memory than this device could give it, so the page reloaded. Quick answers below work fine; you can still try the AI again."
+      : "The previous AI model was too heavy for this device, so the page reloaded. The lightest model is now selected.";
+    w.style.display = "block";
+  }
+  sel.value = saved;
+  sel.hidden = OFFERED.length < 2; $("loadBtn").hidden = false;
+  if (store.get(CRASHED_KEY)) $("loadBtn").textContent = "Try the AI assistant";
+  setEngine("idle", LOW_MEM
+    ? "Quick answers come straight from the profile. On this device the AI assistant uses a light model (~0.7 GB download)."
+    : "Your device can run the AI assistant locally on its GPU. Meanwhile, quick answers come straight from the profile.");
+
+  // If the chosen model is already downloaded, start it automatically, unless it already crashed on this device.
+  if (store.get(CRASHED_KEY)) return;
   try {
     webllm = await import(WEBLLM_URL);
     if (await webllm.hasModelInCache(modelId(saved))) loadModel();
@@ -349,28 +392,31 @@ async function loadModel() {
   if (engineState === "loading" || engineState === "ready") return;
   const sel = $("modelSelect"), btn = $("loadBtn"), bar = $("bar");
   const i = +sel.value;
-  try { localStorage.setItem("model", String(i)); } catch {}
+  store.set("model", String(i));
   sel.disabled = true; btn.disabled = true; bar.style.display = "block";
   setEngine("loading", "Loading the AI model… (first time only: it is downloaded once, then cached on this device)");
   try {
     webllm ??= await import(WEBLLM_URL);
+    markBusy("load", i);
     engine = await webllm.CreateMLCEngine(modelId(i), {
       initProgressCallback: r => {
         bar.firstElementChild.style.width = `${Math.round((r.progress || 0) * 100)}%`;
         if (r.text) $("engineText").textContent = r.text;
       },
-    });
+    }, CHAT_OPTS);
+    clearBusy();
     bar.style.display = "none"; btn.hidden = true;
     setEngine("ready", `AI assistant ready · running locally on your GPU (${MODELS[i].base}).`);
   } catch (e) {
     console.error(e);
+    clearBusy();
     bar.style.display = "none"; sel.disabled = false; btn.disabled = false;
-    setEngine("idle", "Could not load the model. Try the lighter model, or keep using quick answers.");
+    setEngine("idle", LOW_MEM || +sel.value === LIGHTEST ? "Could not load the model. Quick answers still work." : "Could not load the model. Try the lightest model, or keep using quick answers.");
     const w = $("warn"); w.textContent = String(e?.message || e).slice(0, 300); w.style.display = "block";
   }
 }
 $("loadBtn").onclick = loadModel;
-$("modelSelect").onchange = () => { try { localStorage.setItem("model", $("modelSelect").value); } catch {} };
+$("modelSelect").onchange = () => store.set("model", $("modelSelect").value);
 
 // ---------- Answering ----------
 function quickAnswer(q) {
@@ -410,26 +456,30 @@ async function ask(q) {
 
   busy = true; sendBtn.disabled = true;
   const prevUser = history.filter(m => m.role === "user").at(-2)?.content || "";
-  const ctx = retrieve(q + " " + prevUser, 3).map(d => `## ${d.title}\n${d.text}`).join("\n\n");
+  const ctx = retrieve(q + " " + prevUser, BUDGET.sections).map(d => `## ${d.title}\n${d.text}`).join("\n\n");
   const leadInfo = lead.role
     ? `The recruiter is hiring for: ${lead.role.label}. Tie your answers to that role.`
     : `You don't know yet which role the recruiter is hiring for. If it fits naturally, end your answer by asking what role they are recruiting for.`;
   const system = `${RULES}\n\n# Recruiter\n${leadInfo}\n\n# Profile summary\n${P.core}\n\n# Relevant details\n${ctx}`;
-  const recent = history.slice(-7, -1).map(m => ({ role: m.role, content: m.content.slice(0, 700) }));
+  const recent = history.slice(-1 - BUDGET.history, -1).map(m => ({ role: m.role, content: m.content.slice(0, 700) }));
   const messages = [{ role: "system", content: system }, ...recent, { role: "user", content: q }];
 
   const bubble = addMsg("bot", "");
   bubble.classList.add("cursor");
   let text = "";
   try {
-    const stream = await engine.chat.completions.create({ messages, stream: true, temperature: 0.4, top_p: 0.9, max_tokens: 450 });
+    markBusy("generate", +$("modelSelect").value);
+    const stream = await engine.chat.completions.create({ messages, stream: true, temperature: 0.4, top_p: 0.9, max_tokens: BUDGET.maxTokens });
     for await (const chunk of stream) {
       text += chunk.choices[0]?.delta?.content || "";
       bubble.innerHTML = render(text);
       chat.scrollTop = chat.scrollHeight;
     }
+    clearBusy();
+    store.del(CRASHED_KEY); // a full answer went through: the device can handle it
   } catch (e) {
     console.error(e);
+    clearBusy();
     text = text || quickAnswer(q);
     bubble.innerHTML = render(text) + `<span class="tag">The AI hit an error, so this is a quick answer from the profile.</span>`;
   }
