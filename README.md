@@ -28,7 +28,7 @@ Aux visites suivantes, seule l'étape 3 s'affiche ; le bouton « Modèle et lang
 
 ## Comment ça marche
 1. **Réponses rapides** dès l'ouverture : l'app cherche la section la plus pertinente de `knowledge.js` et l'affiche (fonctionne partout, même sans GPU).
-2. **Assistant IA** : bouton « Start the AI assistant ». Le modèle est téléchargé une seule fois puis gardé en cache ; aux visites suivantes il démarre tout seul.
+2. **Assistant IA** : bouton « Start the AI assistant ». Le modèle est téléchargé en mémoire et ne reste pas sur l'appareil du visiteur : les fichiers sont effacés du stockage du navigateur dès qu'il est chargé, il disparaît donc à la fermeture de l'onglet et se retélécharge à chaque visite. Changer de langue ou de modèle dans les réglages ne recharge plus la page.
    - Balanced : Qwen2.5 1.5B (~1 Go), par défaut
    - Best answers : Llama 3.2 3B (~2 Go), meilleure qualité si le GPU suit
    - Lightest : Llama 3.2 1B (~0,7 Go), pour les petites machines

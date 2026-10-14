@@ -1,5 +1,5 @@
-// Search by meaning: a small multilingual embedding model (multilingual-e5-small, ~120 MB, cached by the browser
-// after the first visit) turns texts into vectors so that "Is he PMP certified?" finds the certifications answer even
+// Search by meaning: a small multilingual embedding model (multilingual-e5-small, ~120 MB, kept in memory only and
+// gone when the tab closes) turns texts into vectors so that "Is he PMP certified?" finds the certifications answer even
 // without shared words. Runs on the processor (WebAssembly), separately from the AI model on the graphics card.
 (function (root) {
   const LIB = "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.1/dist/transformers.min.js";
@@ -10,6 +10,7 @@
     loading ??= (async () => {
       const tf = await import(LIB);
       tf.env.allowLocalModels = false;
+      tf.env.useBrowserCache = false; // nothing stored on the visitor's device
       extractor = await tf.pipeline("feature-extraction", MODEL, { dtype: "q8", device: "wasm" });
     })();
     return loading;
