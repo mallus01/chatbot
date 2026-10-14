@@ -193,20 +193,13 @@ He is available immediately and open to relocation.`
   ],
 
   funnel: {
-    welcome: `Hi! I'm Mattis Fernandez's assistant. Mattis is a junior **IT project manager** with a master's-level degree in Data & Fintech, two years of work-study at **Fayat IT** and **AT Internet / Piano**, and a year working in English in Australia. He is **available immediately**.\n\nTo point you to what matters most, **what role are you recruiting for?**`,
+    welcome: `Hi! I'm Mattis Fernandez's assistant. Mattis is a junior **IT project manager** with a master's-level degree in Data & Fintech, two years of work-study at **Fayat IT** and **AT Internet / Piano**, and a year working in English in Australia. He is **available immediately**.`,
+    explore: `What would you like to know about him? Pick a topic below or type your question.`,
+    customPitch: `Thanks! Here is, in short, what Mattis can bring to a **{role}** position: he is a junior IT project manager with two years of work-study in IT (Fayat IT, AT Internet / Piano), a master's-level degree in Data & Fintech, strong analytical rigour and a year of working in English in Australia. Ask me about any part of his experience, or pick a topic below.`,
     ctaAfterAnswers: 3,
     intent: /contact|reach|email|e-mail|phone|call|interview|meet|cv|resume|résumé|hire|interested|available|availability|start|salary|next step|linkedin/i,
     cta: `Sounds like Mattis could be a good match. He is available immediately and happy to talk.`,
-    message: `Hello Mattis, I came across your profile through your recruiting assistant. I'm recruiting for {role} and would like to discuss it with you. Are you available for a call this week?`
-  },
-
-  suggestions: [
-    "Give me a 30-second pitch of Mattis.",
-    "What did he do at Fayat IT?",
-    "Is he a good fit for a business analyst role?",
-    "What are his technical skills?",
-    "Why project management?",
-    "What is he working on improving?",
-    "When can he start, and where?"
-  ]
+    message: `Hello Mattis, I came across your profile through your recruiting assistant. I'm recruiting for {role} and would like to discuss it with you. Are you available for a call this week?`,
+    messageGeneral: `Hello Mattis, I came across your profile through your recruiting assistant and would like to talk with you about possible opportunities. Are you available for a call this week?`
+  }
 };

@@ -2,11 +2,12 @@
 
 Chatbot for recruiters to get to know me more easily.
 
-Webapp statique (aucun serveur) qui répond en anglais aux recruteurs sur ton profil. Le modèle d'IA tourne **dans le navigateur, sur le GPU de l'appareil** (WebGPU + WebLLM). Les questions ne quittent jamais l'appareil.
+Webapp statique (aucun serveur) qui répond aux recruteurs sur ton profil, en anglais ou en français au choix. Le modèle d'IA tourne **dans le navigateur, sur le GPU de l'appareil** (WebGPU + WebLLM). Les questions ne quittent jamais l'appareil.
 
 ## Fichiers
 - `index.html` : l'interface et la logique (WebLLM chargé depuis le CDN jsDelivr, version 0.2.84 figée).
 - `knowledge.js` : ta base de connaissances en anglais, extraite du CV et des deux mémoires. C'est le fichier à modifier pour corriger ou ajouter une info.
+- `knowledge-fr.js` : la même base en français (mêmes `id`). Quand tu modifies une section dans `knowledge.js`, modifie aussi sa version française.
 
 ## Lancer en local
 Double-clique sur `index.html` (Chrome, Edge ou Safari récents). Si le navigateur bloque quelque chose, lance plutôt un petit serveur dans ce dossier :
@@ -14,6 +15,13 @@ Double-clique sur `index.html` (Chrome, Edge ou Safari récents). Si le navigate
 python3 -m http.server 8000
 ```
 puis ouvre http://localhost:8000.
+
+## Les étapes d'accueil
+Avant le chat, le recruteur passe par 3 étapes :
+1. **Choix du modèle** : l'app détecte l'appareil et conseille un modèle (Équilibré sur ordinateur, Le plus léger sur téléphone). Un avertissement s'affiche pour le gros modèle (réponses plus lentes) et pour le petit (erreurs plus probables). « Réponses rapides uniquement » évite tout téléchargement.
+2. **Choix de la langue** (anglais ou français) pendant que le modèle se télécharge. En français, tout passe en français : interface, réponses rapides et réponses de l'IA.
+3. **Poste recherché** : oui (Chef de projet, Business analyst, Product owner, Data/BI, ou « Autre » avec un champ libre) ou non (il découvre le profil).
+Aux visites suivantes, seule l'étape 3 s'affiche ; le bouton « Modèle et langue » permet de changer les deux.
 
 ## Comment ça marche
 1. **Réponses rapides** dès l'ouverture : l'app cherche la section la plus pertinente de `knowledge.js` et l'affiche (fonctionne partout, même sans GPU).
@@ -32,7 +40,7 @@ Il suffit d'héberger ces deux fichiers sur un hébergement statique en HTTPS : 
 
 ## Tunnel de conversion
 Le but du chatbot : amener le recruteur à demander tes coordonnées.
-1. **Accroche** : message d'accueil qui résume ton profil et demande « What role are you recruiting for? », avec des boutons (IT Project Manager, Business Analyst, Product Owner / AMOA, Data / BI, autre). Le recruteur peut aussi l'écrire librement.
+1. **Accroche** : message d'accueil qui résume ton profil, puis le pitch du poste choisi à l'étape 3 (ou une invitation à explorer s'il ne recrute pas pour un poste précis). S'il n'a rien choisi, des boutons lui demandent pour quel poste il recrute.
 2. **Pitch ciblé** : 3 raisons concrètes pour lesquelles tu corresponds à ce poste (textes dans `roles` de `knowledge.js`).
 3. **Preuves** : après chaque réponse, des boutons « Next » proposent les questions les plus utiles pour ce poste, avec toujours en premier « Get his contact details ».
 4. **Appel à l'action** : après 3 réponses, ou dès qu'il parle de disponibilité, salaire, entretien, embauche…, une carte « Want to discuss your … opening with him? ».
