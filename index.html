@@ -150,7 +150,8 @@ const IS_MOBILE = navigator.userAgentData?.mobile ?? /Android|iPhone|iPad|iPod|M
 const LOW_MEM = IS_MOBILE || (navigator.deviceMemory || 8) <= 4;
 const OFFERED = LOW_MEM ? [LIGHTEST] : MODELS.map((_, i) => i);
 const CHAT_OPTS = LOW_MEM ? { context_window_size: 2048 } : undefined;
-const BUDGET = LOW_MEM ? { sections: 2, history: 2, maxTokens: 300 } : { sections: 3, history: 6, maxTokens: 450 };
+// `words` is the length the model is asked to stay under; `maxTokens` is the hard cap (about 1.3 tokens per word, plus margin).
+const BUDGET = LOW_MEM ? { sections: 2, history: 2, words: 70, maxTokens: 160 } : { sections: 3, history: 6, words: 130, maxTokens: 300 };
 
 // Crash detection: a flag is set while the model loads or generates. If the page starts with the flag still set,
 // the previous attempt killed the tab.
@@ -178,7 +179,7 @@ Rules:
 - Use ONLY the facts in the profile below. Never invent employers, dates, numbers, certifications, salary figures or contact details. If the profile does not answer a question, say so honestly and suggest contacting Mattis on LinkedIn (${P.linkedin}).
 - Be warm, confident and persuasive, but factual. Connect his experience to what the recruiter is looking for and give concrete examples.
 - He targets IT project manager roles first and is open to adjacent roles (business analyst, AMOA/functional consultant, product owner, BI/data projects). If asked about an unrelated role, highlight the transferable skills honestly.
-- Keep answers short: 2 to 6 sentences, or a few bullet points. No headings.
+- Keep answers short: at most ${BUDGET.words} words, in 2 to 5 sentences or a few bullet points. No headings. Always finish your last sentence.
 - Politely decline requests unrelated to Mattis's professional profile.
 - Never write out contact details other than the LinkedIn URL. When the recruiter wants to reach Mattis, tell them to click "Get his contact details".
 - Your goal is that the recruiter asks for Mattis's contact details. End every answer with ONE short, natural question that moves the conversation forward: offer a related concrete example from his experience, or, once the recruiter seems interested, offer to share his contact details. Do not be pushy.`;
@@ -419,6 +420,11 @@ $("loadBtn").onclick = loadModel;
 $("modelSelect").onchange = () => store.set("model", $("modelSelect").value);
 
 // ---------- Answering ----------
+function trimToSentence(t) {
+  const end = Math.max(...[...t.matchAll(/[.!?](?=\s|$)/g)].map(m => m.index));
+  return end > t.length * 0.4 ? t.slice(0, end + 1) : t.trimEnd() + "…";
+}
+
 function quickAnswer(q) {
   if (isPitch(q)) return P.core;
   const [top, ...rest] = retrieve(q, 3);
@@ -470,12 +476,16 @@ async function ask(q) {
   try {
     markBusy("generate", +$("modelSelect").value);
     const stream = await engine.chat.completions.create({ messages, stream: true, temperature: 0.4, top_p: 0.9, max_tokens: BUDGET.maxTokens });
+    let cut = false;
     for await (const chunk of stream) {
       text += chunk.choices[0]?.delta?.content || "";
+      if (chunk.choices[0]?.finish_reason === "length") cut = true;
       bubble.innerHTML = render(text);
       chat.scrollTop = chat.scrollHeight;
     }
     clearBusy();
+    // The hard cap stopped the model mid-sentence: keep only complete sentences.
+    if (cut) { text = trimToSentence(text); bubble.innerHTML = render(text); }
     store.del(CRASHED_KEY); // a full answer went through: the device can handle it
   } catch (e) {
     console.error(e);
