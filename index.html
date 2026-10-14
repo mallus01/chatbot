@@ -9,28 +9,30 @@
   :root {
     --bg: #f6f7f9; --panel: #ffffff; --text: #1b1f24; --muted: #5d6673; --border: #e2e5ea;
     --accent: #2457d6; --accent-text: #ffffff; --accent-soft: #e8eefc; --user: #2457d6; --user-text: #ffffff;
-    --bot: #f0f2f5; --warn-bg: #fff6e0; --warn-text: #7a5300; --ok: #1f8a4c;
+    --bot: #f0f2f5; --warn-bg: #fff6e0; --warn-text: #7a5300; --ok: #1f8a4c; --ok-soft: #e3f4ea;
     --shadow: 0 1px 2px rgba(0,0,0,.04), 0 4px 16px rgba(0,0,0,.05);
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
       --bg: #0f1216; --panel: #171b21; --text: #e7eaee; --muted: #9aa3ae; --border: #2a3039;
       --accent: #6d97ff; --accent-text: #0b1020; --accent-soft: #1d2740; --user: #3a63d8; --user-text: #ffffff;
-      --bot: #20262e; --warn-bg: #3a2f12; --warn-text: #f3d48a; --ok: #4cc283; --shadow: none;
+      --bot: #20262e; --warn-bg: #3a2f12; --warn-text: #f3d48a; --ok: #4cc283; --ok-soft: #173326; --shadow: none;
     }
   }
   :root[data-theme="dark"] {
     --bg: #0f1216; --panel: #171b21; --text: #e7eaee; --muted: #9aa3ae; --border: #2a3039;
     --accent: #6d97ff; --accent-text: #0b1020; --accent-soft: #1d2740; --user: #3a63d8; --user-text: #ffffff;
-    --bot: #20262e; --warn-bg: #3a2f12; --warn-text: #f3d48a; --ok: #4cc283; --shadow: none;
+    --bot: #20262e; --warn-bg: #3a2f12; --warn-text: #f3d48a; --ok: #4cc283; --ok-soft: #173326; --shadow: none;
   }
   * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
   html, body { height: 100%; }
   body {
     margin: 0; background: var(--bg); color: var(--text);
     font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   }
   .app { max-width: 860px; margin: 0 auto; height: 100%; display: flex; flex-direction: column; padding: 16px; gap: 12px; }
+  .chat-ui { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 12px; }
   header { display: flex; gap: 14px; align-items: center; background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; box-shadow: var(--shadow); }
   .avatar { flex: none; width: 48px; height: 48px; border-radius: 50%; background: var(--accent); color: var(--accent-text); display: grid; place-items: center; font-weight: 700; font-size: 18px; }
   .who { min-width: 0; flex: 1; }
@@ -44,14 +46,13 @@
   .dot.busy { background: var(--accent); animation: pulse 1s infinite alternate; }
   @keyframes pulse { to { opacity: .3; } }
   #engineText { flex: 1; min-width: 180px; color: var(--muted); }
-  select, button { font: inherit; }
-  select { background: var(--panel); color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 6px 8px; max-width: 100%; }
+  button, input { font: inherit; }
   button { cursor: pointer; border: 0; border-radius: 8px; padding: 7px 14px; background: var(--accent); color: var(--accent-text); font-weight: 600; }
   button.ghost { background: transparent; color: var(--accent); border: 1px solid var(--border); }
   button:disabled { opacity: .5; cursor: default; }
-  .bar { height: 6px; border-radius: 3px; background: var(--border); margin-top: 10px; overflow: hidden; display: none; }
+  .bar { height: 6px; border-radius: 3px; background: var(--border); margin-top: 10px; overflow: hidden; }
   .bar > div { height: 100%; width: 0; background: var(--accent); transition: width .2s; }
-  .warn { margin-top: 10px; background: var(--warn-bg); color: var(--warn-text); border-radius: 8px; padding: 8px 10px; display: none; }
+  .warn { margin-top: 10px; background: var(--warn-bg); color: var(--warn-text); border-radius: 8px; padding: 8px 10px; }
   main { flex: 1; min-height: 0; overflow-y: auto; background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 16px; box-shadow: var(--shadow); }
   .msg { display: flex; margin: 0 0 12px; }
   .msg.user { justify-content: flex-end; }
@@ -68,7 +69,7 @@
   .chip { background: var(--accent-soft); color: var(--accent); border: 0; font-weight: 500; border-radius: 999px; padding: 6px 12px; font-size: 13.5px; white-space: nowrap; flex: none; }
   form { display: flex; gap: 8px; }
   textarea { flex: 1; min-width: 0; resize: none; font: inherit; color: var(--text); background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; height: 46px; max-height: 140px; }
-  textarea:focus, select:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+  textarea:focus, input:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
   .chip.primary { background: var(--accent); color: var(--accent-text); font-weight: 600; }
   .chips-hint { flex: none; align-self: center; color: var(--muted); font-size: 13px; white-space: nowrap; }
   .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
@@ -77,6 +78,44 @@
   .quote { border-left: 3px solid var(--accent); background: var(--panel); border-radius: 6px; padding: 8px 10px; margin: 8px 0 0; font-size: 14px; }
   #contactTop { flex: none; }
   footer { color: var(--muted); font-size: 12px; text-align: center; }
+
+  /* Onboarding steps */
+  .wizard { flex: 1; min-height: 0; overflow-y: auto; background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 20px; box-shadow: var(--shadow); }
+  .wizard > * { max-width: 620px; margin-left: auto; margin-right: auto; }
+  .wz-count { margin-top: 0; margin-bottom: 4px; color: var(--muted); font-size: 13px; font-weight: 600; }
+  .wz-dots { display: flex; gap: 6px; margin-bottom: 14px; }
+  .wz-dots span { height: 4px; flex: 1; border-radius: 2px; background: var(--border); }
+  .wz-dots span.on { background: var(--accent); }
+  .wizard h2 { font-size: 20px; margin: 0 0 6px; }
+  .wizard .muted { color: var(--muted); margin: 0 0 12px; }
+  .wizard .small { font-size: 13px; }
+  .device { background: var(--bot); border-radius: 10px; padding: 8px 12px; font-size: 13.5px; margin: 0 0 14px; }
+  .opts { display: grid; gap: 10px; }
+  .opt { display: block; width: 100%; text-align: left; background: var(--panel); color: var(--text); border: 1.5px solid var(--border); border-radius: 12px; padding: 12px 14px; font-weight: 400; }
+  .opt:hover { border-color: var(--accent); }
+  .opt.selected { border-color: var(--accent); background: var(--accent-soft); }
+  .opt-head { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
+  .opt-meta { color: var(--muted); font-size: 13px; }
+  .opt-desc { display: block; margin-top: 4px; font-size: 14px; }
+  .opt-meter { display: block; margin-top: 4px; color: var(--muted); font-size: 12.5px; }
+  .opt-meter b { color: var(--accent); font-weight: 400; letter-spacing: 1px; }
+  .badge { font-size: 11.5px; font-weight: 600; border-radius: 999px; padding: 2px 8px; background: var(--accent); color: var(--accent-text); }
+  .badge.soft { background: var(--ok-soft); color: var(--ok); }
+  .wz-warn { margin-top: 12px; background: var(--warn-bg); color: var(--warn-text); border-radius: 10px; padding: 10px 12px; font-size: 14px; }
+  .wz-dl { background: var(--bot); border-radius: 10px; padding: 10px 12px; margin: 0 0 16px; font-size: 13.5px; }
+  .wz-dl p { margin: 0; color: var(--muted); }
+  .wz-dl.ok p { color: var(--ok); font-weight: 600; }
+  .wz-dl .bar { margin-top: 8px; }
+  .langs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .langs .opt { text-align: center; font-size: 16px; font-weight: 600; padding: 16px; }
+  .wz-label { font-weight: 600; margin: 16px 0 8px; }
+  .wz-roles { display: flex; flex-wrap: wrap; gap: 8px; }
+  .wz-roles .chip { border: 1.5px solid transparent; }
+  .wz-roles .chip.selected { border-color: var(--accent); background: var(--accent); color: var(--accent-text); }
+  .wz-other { width: 100%; margin-top: 10px; color: var(--text); background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 9px 12px; }
+  .wz-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; }
+  .wz-actions .ghost { margin-right: auto; }
+
   @media (max-width: 560px) {
     .app { padding: 10px 16px; }
     .bubble { max-width: 92%; }
@@ -88,9 +127,12 @@
     #contactTop { padding: 6px 10px; font-size: 13.5px; }
     .engine { padding: 10px 12px; font-size: 12.5px; }
     .warn { padding: 6px 8px; }
+    .wizard { padding: 16px 14px; }
+    .wizard h2 { font-size: 18px; }
   }
 </style>
 <script src="knowledge.js"></script>
+<script src="knowledge-fr.js"></script>
 </head>
 <body>
 <div class="app">
@@ -104,63 +146,209 @@
     <button id="contactTop" type="button">Contact Mattis</button>
   </header>
 
-  <section class="engine" aria-live="polite">
-    <div class="engine-row">
-      <span class="dot" id="dot"></span>
-      <span id="engineText">Checking your device…</span>
-      <select id="modelSelect" aria-label="AI model" hidden></select>
-      <button id="loadBtn" hidden>Start the AI assistant</button>
-    </div>
-    <div class="bar" id="bar"><div></div></div>
-    <div class="warn" id="warn"></div>
-  </section>
+  <section class="wizard" id="wizard" aria-live="polite" hidden></section>
 
-  <main id="chat" aria-live="polite"></main>
+  <div class="chat-ui" id="chatUI">
+    <section class="engine" aria-live="polite">
+      <div class="engine-row">
+        <span class="dot" id="dot"></span>
+        <span id="engineText">Checking your device…</span>
+        <button id="startBtn" type="button" hidden></button>
+        <button id="settingsBtn" type="button" class="ghost" hidden></button>
+      </div>
+      <div class="bar" id="bar" hidden><div></div></div>
+      <div class="warn" id="warn" hidden></div>
+    </section>
 
-  <div class="chips" id="chips"></div>
+    <main id="chat" aria-live="polite"></main>
 
-  <form id="form">
-    <textarea id="input" placeholder="Ask anything about Mattis's profile…" rows="1" aria-label="Your question"></textarea>
-    <button type="submit" id="sendBtn">Send</button>
-  </form>
-  <footer>The AI runs entirely on your device; your questions are never sent to a server. Answers are generated from Mattis's CV and theses and may contain mistakes.</footer>
+    <div class="chips" id="chips"></div>
+
+    <form id="form">
+      <textarea id="input" rows="1"></textarea>
+      <button type="submit" id="sendBtn"></button>
+    </form>
+    <footer id="footer"></footer>
+  </div>
 </div>
 
 <script type="module">
 const WEBLLM_URL = "https://cdn.jsdelivr.net/npm/@mlc-ai/web-llm@0.2.84/+esm";
-const P = window.PROFILE;
-if (!P) {
+const BASE = window.PROFILE, FR = window.PROFILE_FR;
+if (!BASE) {
   // Happens when index.html is opened on its own, e.g. straight from inside a ZIP without extracting it.
   document.getElementById("engineText").textContent = "Profile data not found.";
-  document.getElementById("chat").innerHTML = `<div class="msg bot"><div class="bubble"><p><strong>knowledge.js could not be loaded.</strong></p><p>Keep <code>index.html</code> and <code>knowledge.js</code> in the same folder. If you downloaded a ZIP, extract it first (right-click › Extract all), then open <code>index.html</code> from the extracted folder.</p></div></div>`;
+  document.getElementById("chat").innerHTML = `<div class="msg bot"><div class="bubble"><p><strong>knowledge.js could not be loaded.</strong></p><p>Keep <code>index.html</code>, <code>knowledge.js</code> and <code>knowledge-fr.js</code> in the same folder. If you downloaded a ZIP, extract it first (right-click › Extract all), then open <code>index.html</code> from the extracted folder.</p></div></div>`;
   throw new Error("window.PROFILE missing: knowledge.js not loaded");
 }
 
+// ---------- Interface texts ----------
+const T = {
+  en: {
+    title: "Ask about Mattis", contactTop: "Contact Mattis", placeholder: "Ask anything about Mattis's profile…", send: "Send",
+    footer: "The AI runs entirely on your device; your questions are never sent to a server. Answers are generated from Mattis's CV and theses and may contain mistakes.",
+    settings: "Model & language", startAi: "Start the AI assistant ({size})", useAi: "Use the AI assistant", retry: "Try again",
+    checking: "Checking your device…",
+    engQuick: "Quick-answer mode: answers come straight from Mattis's profile.",
+    engIdle: "The AI assistant is not started yet. Meanwhile, quick answers come straight from the profile.",
+    engLoading: "Loading the AI model… Quick answers work in the meantime.",
+    engReady: "AI assistant ready · running locally on your GPU ({m}).",
+    engFail: "Could not load the AI model. Quick answers still work.",
+    downloading: "Downloading the AI model: {p}% (first time only, then kept on this device)",
+    preparing: "Preparing the AI model on your graphics card…",
+    modelReady: "AI model ready.",
+    dlFail: "The AI model could not be loaded. You can continue with quick answers.",
+    noWebgpu: "This browser does not support WebGPU, so the on-device AI cannot run here. Quick answers work fine; for the full assistant, open this page in a recent Chrome, Edge or Safari on a computer.",
+    noAdapter: "WebGPU is available but no compatible graphics card was found, so the on-device AI cannot run here. Quick answers work fine.",
+    crashLight: "The AI assistant needed more memory than this device could give it, so the page reloaded. Quick answers are selected; you can still try the lightest model.",
+    crashHeavy: "The previous AI model was too heavy for this device, so the page reloaded. The lightest model is now selected.",
+    stepOf: "Step {n} of {total}",
+    s1Title: "Choose the AI model",
+    s1Intro: "The assistant runs on your device, on its graphics card, so nothing is sent to a server. A larger model gives better answers but takes longer to reply.",
+    devDesktop: "Your device: computer with a compatible graphics card.",
+    devMobile: "Your device: phone or tablet. Larger models would run out of memory here, so only the lightest one is offered.",
+    devLowMem: "Your device: computer with limited memory. Only the lightest model is offered.",
+    recommended: "Recommended for your device", cached: "Already downloaded",
+    speed: "Speed", accuracy: "Accuracy",
+    m0name: "Balanced", m0desc: "Good answers with reasonable response times on most computers.",
+    m1name: "Best answers", m1desc: "The most accurate and natural answers.",
+    m2name: "Lightest", m2desc: "The fastest to download and to answer.",
+    qName: "Quick answers only", qMeta: "No download", qDesc: "Answers are passages taken straight from his profile, without AI. Works on any device.",
+    warnBig: "Large model: answers take noticeably longer to appear, the download is bigger, and it needs a recent graphics card with plenty of memory.",
+    warnSmall: "Small model: mistakes and inaccurate answers are more likely. Fine for a first look; check important facts with Mattis.",
+    warnQuick: "Without the AI, answers are not conversational: you get the profile passage that best matches your question.",
+    downloadContinue: "Download and continue", next: "Continue", back: "Back", cancel: "Cancel", apply: "Apply",
+    s2Title: "Which language would you like to chat in?",
+    s2Note: "The AI model downloads in the meantime.",
+    s3Title: "Are you recruiting for a specific position?",
+    yes: "Yes, for a specific position", no: "No, I'm discovering his profile",
+    whichRole: "Which position?", other: "Other", otherPh: "Position title, e.g. IT consultant",
+    startChat: "Start the chat",
+    hintRole: "Recruiting for:", hintNext: "Next:",
+    contactChip: "Get his contact details", contactQ: "How can I contact him?", keepExploring: "Keep exploring",
+    ctaRole: " Want to discuss your **{role}** opening with him?",
+    recruitingFor: "I'm recruiting for: {role}", exploring: "I'm discovering his profile, no specific position yet.",
+    contactIntro: "Great! Mattis is **available immediately**. Here is how to reach him:",
+    linkedinBtn: "Message him on LinkedIn", emailBtn: "Email {e}", callBtn: "Call {p}", cvBtn: "Download his CV",
+    readyMsg: "Ready-to-send message:", copy: "Copy message", copied: "Copied!", copyFail: "Select the text above to copy it",
+    roleA: "a {role} position", subject: "Opportunity: {role}", itRole: "IT role",
+    sharedContact: "I shared Mattis's contact details (LinkedIn{rest}).",
+    related: "Related topics", quickTag: "Quick answer from the profile",
+    quickTagIdle: "Quick answer from the profile · start the AI assistant above for a conversational answer",
+    quickTagLoading: "Quick answer from the profile · the AI assistant is still loading",
+    aiError: "The AI hit an error, so this is a quick answer from the profile.",
+  },
+  fr: {
+    title: "Questions sur Mattis", contactTop: "Contacter Mattis", placeholder: "Votre question sur Mattis…", send: "Envoyer",
+    footer: "L'IA tourne entièrement sur votre appareil : vos questions ne sont jamais envoyées à un serveur. Les réponses sont générées à partir du CV et des mémoires de Mattis et peuvent contenir des erreurs.",
+    settings: "Modèle et langue", startAi: "Lancer l'assistant IA ({size})", useAi: "Utiliser l'assistant IA", retry: "Réessayer",
+    checking: "Analyse de votre appareil…",
+    engQuick: "Mode réponses rapides : les réponses viennent directement du profil de Mattis.",
+    engIdle: "L'assistant IA n'est pas encore lancé. En attendant, les réponses rapides viennent directement du profil.",
+    engLoading: "Chargement du modèle d'IA… Les réponses rapides fonctionnent en attendant.",
+    engReady: "Assistant IA prêt · il tourne sur votre carte graphique ({m}).",
+    engFail: "Le modèle d'IA n'a pas pu être chargé. Les réponses rapides fonctionnent toujours.",
+    downloading: "Téléchargement du modèle d'IA : {p} % (la première fois seulement, il reste ensuite sur cet appareil)",
+    preparing: "Préparation du modèle d'IA sur votre carte graphique…",
+    modelReady: "Modèle d'IA prêt.",
+    dlFail: "Le modèle d'IA n'a pas pu être chargé. Vous pouvez continuer avec les réponses rapides.",
+    noWebgpu: "Ce navigateur ne prend pas en charge WebGPU : l'IA ne peut pas tourner ici. Les réponses rapides fonctionnent ; pour l'assistant complet, ouvrez cette page dans un Chrome, Edge ou Safari récent sur un ordinateur.",
+    noAdapter: "WebGPU est disponible mais aucune carte graphique compatible n'a été trouvée : l'IA ne peut pas tourner ici. Les réponses rapides fonctionnent.",
+    crashLight: "L'assistant IA a demandé plus de mémoire que cet appareil ne pouvait en donner, la page s'est donc rechargée. Les réponses rapides sont sélectionnées ; vous pouvez quand même essayer le modèle le plus léger.",
+    crashHeavy: "Le modèle précédent était trop lourd pour cet appareil, la page s'est donc rechargée. Le modèle le plus léger est maintenant sélectionné.",
+    stepOf: "Étape {n} sur {total}",
+    s1Title: "Choisissez le modèle d'IA",
+    s1Intro: "L'assistant tourne sur votre appareil, sur sa carte graphique : rien n'est envoyé à un serveur. Un modèle plus gros donne de meilleures réponses mais met plus de temps à répondre.",
+    devDesktop: "Votre appareil : ordinateur avec une carte graphique compatible.",
+    devMobile: "Votre appareil : téléphone ou tablette. Les modèles plus gros manqueraient de mémoire ici, seul le plus léger est proposé.",
+    devLowMem: "Votre appareil : ordinateur avec peu de mémoire. Seul le modèle le plus léger est proposé.",
+    recommended: "Conseillé pour votre appareil", cached: "Déjà téléchargé",
+    speed: "Rapidité", accuracy: "Précision",
+    m0name: "Équilibré", m0desc: "De bonnes réponses avec des temps de réponse raisonnables sur la plupart des ordinateurs.",
+    m1name: "Meilleures réponses", m1desc: "Les réponses les plus précises et les plus naturelles.",
+    m2name: "Le plus léger", m2desc: "Le plus rapide à télécharger et à répondre.",
+    qName: "Réponses rapides uniquement", qMeta: "Sans téléchargement", qDesc: "Les réponses sont des extraits de son profil, sans IA. Fonctionne sur tous les appareils.",
+    warnBig: "Gros modèle : les réponses mettent nettement plus de temps à s'afficher, le téléchargement est plus lourd et il faut une carte graphique récente avec beaucoup de mémoire.",
+    warnSmall: "Petit modèle : les erreurs et les imprécisions sont plus probables. Suffisant pour un premier aperçu ; vérifiez les points importants avec Mattis.",
+    warnQuick: "Sans l'IA, les réponses ne sont pas conversationnelles : vous obtenez le passage du profil qui correspond le mieux à votre question.",
+    downloadContinue: "Télécharger et continuer", next: "Continuer", back: "Retour", cancel: "Annuler", apply: "Appliquer",
+    s2Title: "Dans quelle langue souhaitez-vous échanger ?",
+    s2Note: "Le modèle d'IA se télécharge pendant ce temps.",
+    s3Title: "Recrutez-vous pour un poste précis ?",
+    yes: "Oui, pour un poste précis", no: "Non, je découvre son profil",
+    whichRole: "Quel poste ?", other: "Autre", otherPh: "Intitulé du poste, par ex. consultant IT",
+    startChat: "Commencer la discussion",
+    hintRole: "Vous recrutez pour :", hintNext: "Ensuite :",
+    contactChip: "Obtenir ses coordonnées", contactQ: "Comment le contacter ?", keepExploring: "Continuer à explorer",
+    ctaRole: " Voulez-vous lui parler de votre poste de **{role}** ?",
+    recruitingFor: "Je recrute pour : {role}", exploring: "Je découvre son profil, sans poste précis pour l'instant.",
+    contactIntro: "Parfait ! Mattis est **disponible immédiatement**. Voici comment le joindre :",
+    linkedinBtn: "Lui écrire sur LinkedIn", emailBtn: "Écrire à {e}", callBtn: "Appeler le {p}", cvBtn: "Télécharger son CV",
+    readyMsg: "Message prêt à envoyer :", copy: "Copier le message", copied: "Copié !", copyFail: "Sélectionnez le texte ci-dessus pour le copier",
+    roleA: "un poste de {role}", subject: "Opportunité : {role}", itRole: "poste informatique",
+    sharedContact: "J'ai partagé les coordonnées de Mattis (LinkedIn{rest}).",
+    related: "Thèmes liés", quickTag: "Réponse rapide tirée du profil",
+    quickTagIdle: "Réponse rapide tirée du profil · lancez l'assistant IA ci-dessus pour une réponse conversationnelle",
+    quickTagLoading: "Réponse rapide tirée du profil · l'assistant IA est encore en cours de chargement",
+    aiError: "L'IA a rencontré une erreur : voici une réponse rapide tirée du profil.",
+  },
+};
+
+const store = {
+  get: k => { try { return localStorage.getItem(k); } catch { return null; } },
+  set: (k, v) => { try { localStorage.setItem(k, v); } catch {} },
+  del: k => { try { localStorage.removeItem(k); } catch {} },
+};
+const session = {
+  take: k => { try { const v = sessionStorage.getItem(k); sessionStorage.removeItem(k); return v; } catch { return null; } },
+  set: (k, v) => { try { sessionStorage.setItem(k, v); } catch {} },
+};
+
+// Interface language: the saved choice, otherwise the browser's language until the recruiter picks one.
+let LANG = store.get("lang") || ((navigator.language || "en").toLowerCase().startsWith("fr") && FR ? "fr" : "en");
+const t = (k, v = {}) => (T[LANG][k] ?? T.en[k]).replace(/\{(\w+)\}/g, (_, n) => v[n] ?? "");
+
+// Profile in the chosen language: French texts replace the English ones section by section (same ids).
+function localize(lang) {
+  if (lang !== "fr" || !FR) return BASE;
+  const byId = (arr, id) => (arr || []).find(x => x.id === id) || {};
+  return {
+    ...BASE,
+    headline: FR.headline || BASE.headline, location: FR.location || BASE.location, core: FR.core || BASE.core,
+    sections: BASE.sections.map(s => { const f = byId(FR.sections, s.id); return { ...s, ...f, keywords: [...s.keywords, ...(f.keywords || [])] }; }),
+    roles: BASE.roles.map(r => {
+      const f = byId(FR.roles, r.id);
+      const match = r.match && f.match ? new RegExp(`${r.match.source}|${f.match.source}`, "i") : r.match || f.match || null;
+      return { ...r, ...f, match, focus: r.focus };
+    }),
+    funnel: { ...BASE.funnel, ...FR.funnel },
+  };
+}
+
 // Models offered. `id` gets the "-q4f16_1-MLC" or "-q4f32_1-MLC" suffix depending on GPU support.
+// speed / quality are shown as 1-3 dots on the model cards.
 const MODELS = [
-  { base: "Qwen2.5-1.5B-Instruct", label: "Balanced · Qwen2.5 1.5B (~1 GB download)" },
-  { base: "Llama-3.2-3B-Instruct", label: "Best answers · Llama 3.2 3B (~2 GB download)" },
-  { base: "Llama-3.2-1B-Instruct", label: "Lightest · Llama 3.2 1B (~0.7 GB download)" },
+  { base: "Qwen2.5-1.5B-Instruct", short: "Qwen2.5 1.5B", size: { en: "~1 GB", fr: "~1 Go" }, speed: 2, quality: 2 },
+  { base: "Llama-3.2-3B-Instruct", short: "Llama 3.2 3B", size: { en: "~2 GB", fr: "~2 Go" }, speed: 1, quality: 3 },
+  { base: "Llama-3.2-1B-Instruct", short: "Llama 3.2 1B", size: { en: "~0.7 GB", fr: "~0,7 Go" }, speed: 3, quality: 1 },
 ];
-const DEFAULT_MODEL = 0, LIGHTEST = 2;
+const DEFAULT_MODEL = 0, BIGGEST = 1, LIGHTEST = 2;
 
 // Phones and low-memory devices: the browser kills the tab (and reloads the page) when the GPU runs out of memory,
 // so they only get the lightest model with a smaller context window.
 const IS_MOBILE = navigator.userAgentData?.mobile ?? /Android|iPhone|iPad|iPod|Mobi/i.test(navigator.userAgent);
 const LOW_MEM = IS_MOBILE || (navigator.deviceMemory || 8) <= 4;
 const OFFERED = LOW_MEM ? [LIGHTEST] : MODELS.map((_, i) => i);
+const RECOMMENDED = LOW_MEM ? LIGHTEST : DEFAULT_MODEL;
 const CHAT_OPTS = LOW_MEM ? { context_window_size: 2048 } : undefined;
-// `words` is the length the model is asked to stay under; `maxTokens` is the hard cap (about 1.3 tokens per word, plus margin).
+// `words` is the length the model is asked to stay under; `maxTokens` is the hard cap (about 1.3 tokens per English word,
+// more in French, plus margin).
 const BUDGET = LOW_MEM ? { sections: 2, history: 2, words: 70, maxTokens: 160 } : { sections: 3, history: 6, words: 130, maxTokens: 300 };
+const wordLimit = () => LANG === "fr" ? Math.round(BUDGET.words * 0.8) : BUDGET.words;
 
 // Crash detection: a flag is set while the model loads or generates. If the page starts with the flag still set,
 // the previous attempt killed the tab.
 const BUSY_KEY = "aiBusy", CRASHED_KEY = "aiCrashed";
-const store = {
-  get: k => { try { return localStorage.getItem(k); } catch { return null; } },
-  set: (k, v) => { try { localStorage.setItem(k, v); } catch {} },
-  del: k => { try { localStorage.removeItem(k); } catch {} },
-};
 const markBusy = (stage, i) => store.set(BUSY_KEY, JSON.stringify({ stage, model: i, t: Date.now() }));
 const clearBusy = () => store.del(BUSY_KEY);
 function readCrash() {
@@ -172,41 +360,30 @@ function readCrash() {
 // Closing or leaving the page mid-answer is not a crash.
 addEventListener("pagehide", clearBusy);
 
-const RULES = `You are the recruiting assistant for ${P.name}. You talk with recruiters and hiring managers about his professional profile, and your goal is to make them want to interview him.
-Rules:
-- Always answer in English, even if the question is in another language.
-- Refer to Mattis in the third person ("Mattis", "he"). You are his assistant, not Mattis himself.
-- Use ONLY the facts in the profile below. Never invent employers, dates, numbers, certifications, salary figures or contact details. If the profile does not answer a question, say so honestly and suggest contacting Mattis on LinkedIn (${P.linkedin}).
-- Be warm, confident and persuasive, but factual. Connect his experience to what the recruiter is looking for and give concrete examples.
-- He targets IT project manager roles first and is open to adjacent roles (business analyst, AMOA/functional consultant, product owner, BI/data projects). If asked about an unrelated role, highlight the transferable skills honestly.
-- Keep answers short: at most ${BUDGET.words} words, in 2 to 5 sentences or a few bullet points. No headings. Always finish your last sentence.
-- Politely decline requests unrelated to Mattis's professional profile.
-- Never write out contact details other than the LinkedIn URL. When the recruiter wants to reach Mattis, tell them to click "Get his contact details".
-- Your goal is that the recruiter asks for Mattis's contact details. End every answer with ONE short, natural question that moves the conversation forward: offer a related concrete example from his experience, or, once the recruiter seems interested, offer to share his contact details. Do not be pushy.`;
-
-// ---------- Retrieval ----------
-const STOP = new Set("a an the and or of to in on for with at by from is are was were be been his he him her she it its this that what which who how do does did can could would should about tell me you your i my we our has have had as any some more than there their they them into also just".split(" "));
+// ---------- Profile content (built when the chat starts, in the chosen language) ----------
+let P = localize(LANG), F = P.funnel, docs = [], df = new Map(), STOP = new Set();
+const STOP_EN = "a an the and or of to in on for with at by from is are was were be been his he him her she it its this that what which who how do does did can could would should about tell me you your i my we our has have had as any some more than there their they them into also just";
+const STOP_FR = "le la les un une des du de d l et ou au aux en dans sur pour par avec est sont etait il elle lui son sa ses ce cet cette ces que qu qui quoi quel quelle quels quelles comment ne n pas vous votre vos je j me m mon ma mes nous notre se s on y fait faire peut peux pouvez parle parlez dire dites moi a-t-il est-ce t c avez ete";
 const norm = s => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
 const tokens = s => norm(s).split(/[^a-z0-9.+#-]+/).map(t => t.replace(/^[.-]+|[.-]+$/g, "")).filter(t => t && !STOP.has(t)).map(t => t.length > 4 && t.endsWith("s") ? t.slice(0, -1) : t);
 
-const docs = P.sections.map(s => ({
-  ...s,
-  kw: new Set(s.keywords.flatMap(tokens)),
-  title_t: new Set(tokens(s.title)),
-  body: new Set(tokens(s.text)),
-}));
-const df = new Map();
-for (const d of docs) for (const t of d.body) df.set(t, (df.get(t) || 0) + 1);
-const idf = t => Math.log(1 + docs.length / (df.get(t) || docs.length));
+function buildContent() {
+  P = localize(LANG); F = P.funnel;
+  STOP = new Set((STOP_EN + (LANG === "fr" ? " " + STOP_FR : "")).split(" "));
+  docs = P.sections.map(s => ({ ...s, kw: new Set(s.keywords.flatMap(tokens)), title_t: new Set(tokens(s.title)), body: new Set(tokens(s.text)) }));
+  df = new Map();
+  for (const d of docs) for (const tk of d.body) df.set(tk, (df.get(tk) || 0) + 1);
+}
+const idf = tk => Math.log(1 + docs.length / (df.get(tk) || docs.length));
 
 function retrieve(query, k = 3, withScore = false) {
   const q = [...new Set(tokens(query))];
   const scored = docs.map(d => {
     let s = 0;
-    for (const t of q) {
-      if (d.kw.has(t)) s += 3;
-      if (d.title_t.has(t)) s += 2;
-      if (d.body.has(t)) s += idf(t);
+    for (const tk of q) {
+      if (d.kw.has(tk)) s += 3;
+      if (d.title_t.has(tk)) s += 2;
+      if (d.body.has(tk)) s += idf(tk);
     }
     return { d, s };
   }).sort((a, b) => b.s - a.s);
@@ -216,17 +393,62 @@ function retrieve(query, k = 3, withScore = false) {
 }
 
 // A broad "who is he" question gets the summary; a specific topic ("tell me about his degree") gets its section.
-const isPitch = q => /\b(pitch|summary|summari[sz]e|overview|introduce|who is|about (him|mattis)|profile|background|tell me about)\b/i.test(q) && retrieve(q, 1, true).s < 3;
+const PITCH_RE = /\b(pitch|summary|summari[sz]e|overview|introduce|who is|about (him|mattis)|profile|background|tell me about)\b|r[ée]sum|pr[ée]sente|qui est|profil|parcours|parle[sz]?-moi de|en bref/i;
+// ("résumé" also matches the English "resume" keyword of the contact section, hence the exception.)
+const isPitch = q => { if (!PITCH_RE.test(q)) return false; const top = retrieve(q, 1, true); return top.s < 3 || top.d.id === "contact"; };
+
+function rules() {
+  if (LANG === "fr") return `Tu es l'assistant de recrutement de ${P.name}. Tu échanges avec des recruteurs et des responsables du recrutement sur son profil professionnel, et ton objectif est de leur donner envie de le rencontrer en entretien.
+Règles :
+- Réponds toujours en français, même si la question est posée dans une autre langue. Vouvoie le recruteur.
+- Parle de Mattis à la troisième personne (« Mattis », « il »). Tu es son assistant, pas Mattis lui-même.
+- Utilise UNIQUEMENT les informations du profil ci-dessous. N'invente jamais d'employeurs, de dates, de chiffres, de certifications, de salaires ni de coordonnées. Si le profil ne répond pas à une question, dis-le honnêtement et propose de contacter Mattis sur LinkedIn (${P.linkedin}).
+- Sois chaleureux, confiant et convaincant, mais factuel. Relie son expérience à ce que cherche le recruteur et donne des exemples concrets.
+- Il vise d'abord des postes de chef de projet informatique et reste ouvert aux postes proches (business analyst, consultant AMOA ou fonctionnel, product owner, projets BI et data). Si on t'interroge sur un poste sans rapport, mets honnêtement en avant ses compétences transférables.
+- Réponds court : ${wordLimit()} mots au maximum, en 2 à 5 phrases ou quelques puces. Pas de titres. Termine toujours ta dernière phrase.
+- Décline poliment les demandes sans rapport avec le profil professionnel de Mattis.
+- N'écris jamais de coordonnées autres que l'URL LinkedIn. Quand le recruteur veut joindre Mattis, dis-lui de cliquer sur « ${t("contactChip")} ».
+- Ton objectif est que le recruteur demande les coordonnées de Mattis. Termine chaque réponse par UNE question courte et naturelle qui fait avancer la conversation : propose un exemple concret tiré de son expérience ou, quand le recruteur semble intéressé, propose de partager ses coordonnées. Ne sois pas insistant.`;
+  return `You are the recruiting assistant for ${P.name}. You talk with recruiters and hiring managers about his professional profile, and your goal is to make them want to interview him.
+Rules:
+- Always answer in English, even if the question is in another language.
+- Refer to Mattis in the third person ("Mattis", "he"). You are his assistant, not Mattis himself.
+- Use ONLY the facts in the profile below. Never invent employers, dates, numbers, certifications, salary figures or contact details. If the profile does not answer a question, say so honestly and suggest contacting Mattis on LinkedIn (${P.linkedin}).
+- Be warm, confident and persuasive, but factual. Connect his experience to what the recruiter is looking for and give concrete examples.
+- He targets IT project manager roles first and is open to adjacent roles (business analyst, AMOA/functional consultant, product owner, BI/data projects). If asked about an unrelated role, highlight the transferable skills honestly.
+- Keep answers short: at most ${wordLimit()} words, in 2 to 5 sentences or a few bullet points. No headings. Always finish your last sentence.
+- Politely decline requests unrelated to Mattis's professional profile.
+- Never write out contact details other than the LinkedIn URL. When the recruiter wants to reach Mattis, tell them to click "${t("contactChip")}".
+- Your goal is that the recruiter asks for Mattis's contact details. End every answer with ONE short, natural question that moves the conversation forward: offer a related concrete example from his experience, or, once the recruiter seems interested, offer to share his contact details. Do not be pushy.`;
+}
+
+function leadInfo() {
+  const fr = LANG === "fr";
+  if (lead.role) return fr ? `Le recruteur recrute pour : ${lead.role.label}. Relie tes réponses à ce poste.` : `The recruiter is hiring for: ${lead.role.label}. Tie your answers to that role.`;
+  if (lead.exploring) return fr ? `Le recruteur ne recrute pas pour un poste précis pour l'instant : il découvre le profil. Mets en avant ses points forts généraux.` : `The recruiter is not hiring for a specific position right now; they are discovering his profile. Highlight his overall strengths.`;
+  return fr ? `Tu ne sais pas encore pour quel poste le recruteur recrute. Si cela vient naturellement, termine ta réponse en lui demandant pour quel poste il recrute.` : `You don't know yet which role the recruiter is hiring for. If it fits naturally, end your answer by asking what role they are recruiting for.`;
+}
 
 // ---------- UI ----------
 const $ = id => document.getElementById(id);
-const chat = $("chat"), input = $("input"), form = $("form"), sendBtn = $("sendBtn");
-$("name").textContent = P.name;
-$("headline").textContent = P.headline;
-$("location").textContent = P.location;
-$("linkedin").href = P.linkedin;
+const chat = $("chat"), input = $("input"), form = $("form"), sendBtn = $("sendBtn"), wizard = $("wizard");
 
-function esc(s) { return s.replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
+function applyTexts() {
+  const p = localize(LANG);
+  document.documentElement.lang = LANG;
+  document.title = t("title");
+  $("name").textContent = p.name;
+  $("headline").textContent = p.headline;
+  $("location").textContent = p.location;
+  $("linkedin").href = p.linkedin;
+  $("contactTop").textContent = t("contactTop");
+  input.placeholder = t("placeholder"); input.setAttribute("aria-label", t("placeholder"));
+  sendBtn.textContent = t("send");
+  $("footer").textContent = t("footer");
+  $("settingsBtn").textContent = t("settings");
+}
+
+function esc(s) { return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
 function inline(s) {
   return esc(s)
     .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
@@ -257,13 +479,17 @@ function addMsg(role, text, tag) {
 }
 
 // ---------- Conversion funnel ----------
-// Hook (welcome) -> recruiter's need (role) -> tailored pitch -> proof (follow-up chips) -> call to action -> contact card.
-const F = P.funnel, C = P.contact;
-const lead = { role: null };
-let answers = 0, ctaShown = false, contactShown = false;
+// Steps (model, language, position) -> tailored pitch -> proof (follow-up chips) -> call to action -> contact card.
+const C = BASE.contact;
+const lead = { role: null, exploring: false };
+let answers = 0, ctaShown = false, contactShown = false, chatStarted = false;
 const seen = new Set();
-const CONTACT_INTENT = /contact|reach (him|out|mattis)|e-?mail|phone|call him|linkedin|\bcv\b|resume|résumé|interview|get in touch|meet (him|mattis)|schedule/i;
-const ROLE_STATEMENT = /recruit|hiring|hire for|looking for|position|vacancy|opening|\brole\b|\bjob\b/i;
+const history = []; // {role, content}
+const CONTACT_INTENT = {
+  en: /contact|reach (him|out|mattis)|e-?mail|phone|call him|linkedin|\bcv\b|resume|résumé|interview|get in touch|meet (him|mattis)|schedule/i,
+  fr: /contact|coordonn|joindre|e-?mail|\bmail\b|courriel|t[ée]l[ée]phone|appeler|linkedin|\bcv\b|entretien|rencontrer|rendez-vous/i,
+};
+const ROLE_STATEMENT = /recruit|hiring|hire for|looking for|position|vacancy|opening|\brole\b|\bjob\b|recrute|cherche|poste|offre/i;
 
 function setChips(items, hint = "") {
   const box = $("chips"); box.innerHTML = "";
@@ -276,14 +502,15 @@ function setChips(items, hint = "") {
   }
 }
 const askChip = id => { const d = docs.find(x => x.id === id); return { label: d.ask, run: () => ask(d.ask) }; };
-const contactChip = { label: "Get his contact details", primary: true, run: () => ask("How can I contact him?") };
+const contactChip = () => ({ label: t("contactChip"), primary: true, run: () => ask(t("contactQ")) });
 const roleChips = () => P.roles.map(r => ({ label: r.label, run: () => chooseRole(r) }));
 
 function nextStep() {
-  if (!lead.role) return setChips(roleChips(), "Recruiting for:");
-  const pool = [...lead.role.focus, "why-pm", "strengths", "atinternet", "fayat-training", "languages", "education", "australia", "growth"];
+  if (!lead.role && !lead.exploring) return setChips(roleChips(), t("hintRole"));
+  const focus = lead.role ? lead.role.focus : ["strengths", "fayat", "why-pm", "availability"];
+  const pool = [...focus, "why-pm", "strengths", "atinternet", "fayat-training", "languages", "education", "australia", "growth"];
   const picks = [...new Set(pool)].filter(id => !seen.has(id)).slice(0, 3).map(askChip);
-  setChips(contactShown ? picks : [contactChip, ...picks], "Next:");
+  setChips(contactShown ? picks : [contactChip(), ...picks], t("hintNext"));
 }
 
 function botSay(text, tag) {
@@ -291,154 +518,309 @@ function botSay(text, tag) {
   history.push({ role: "assistant", content: text });
   return b;
 }
+function userSay(text) { addMsg("user", text); history.push({ role: "user", content: text }); }
 
 function chooseRole(r, typed = false) {
   if (busy) return;
-  lead.role = r;
-  if (!typed) { addMsg("user", `I'm recruiting for: ${r.label}`); history.push({ role: "user", content: `I'm recruiting for: ${r.label}` }); }
-  botSay(r.pitch);
+  lead.role = r; lead.exploring = false;
+  if (!typed) userSay(t("recruitingFor", { role: r.label }));
+  botSay(r.custom ? F.customPitch.replace("{role}", r.label) : r.pitch);
   nextStep();
+}
+
+// A position typed in the "Other" field: reuse a known role's pitch when it matches, otherwise a generic one.
+function customRole(text) {
+  const known = P.roles.find(r => r.match && r.match.test(text));
+  return known ? { ...known, label: text } : { ...P.roles.find(r => r.id === "other"), label: text, custom: true };
 }
 
 function showCta() {
   ctaShown = true;
-  const b = addMsg("bot", `${F.cta}${lead.role ? ` Want to discuss your **${lead.role.label}** opening with him?` : ""}`);
-  b.insertAdjacentHTML("beforeend", `<div class="actions"><button class="btn" data-a="contact">Get his contact details</button><button class="btn ghost" data-a="more">Keep exploring</button></div>`);
-  b.querySelector('[data-a="contact"]').onclick = () => ask("How can I contact him?");
+  const b = addMsg("bot", `${F.cta}${lead.role ? t("ctaRole", { role: lead.role.label }) : ""}`);
+  b.insertAdjacentHTML("beforeend", `<div class="actions"><button class="btn" data-a="contact">${esc(t("contactChip"))}</button><button class="btn ghost" data-a="more">${esc(t("keepExploring"))}</button></div>`);
+  b.querySelector('[data-a="contact"]').onclick = () => ask(t("contactQ"));
   b.querySelector('[data-a="more"]').onclick = e => { e.target.closest(".actions").remove(); input.focus(); };
 }
 
 function showContact() {
   contactShown = true;
-  const role = lead.role && lead.role.id !== "other" ? `a ${lead.role.label} position` : "a position";
-  const msg = F.message.replace("{role}", role);
-  const subject = encodeURIComponent(`Opportunity: ${lead.role ? lead.role.label : "IT role"}`);
-  let html = render(`Great! Mattis is **available immediately**. Here is how to reach him:`);
+  const named = lead.role && lead.role.id !== "other" || lead.role?.custom;
+  const msg = named ? F.message.replace("{role}", t("roleA", { role: lead.role.label })) : F.messageGeneral;
+  const subject = encodeURIComponent(t("subject", { role: lead.role ? lead.role.label : t("itRole") }));
+  let html = render(t("contactIntro"));
   html += `<div class="actions">`;
-  if (C.linkedin) html += `<a class="btn" href="${esc(C.linkedin)}" target="_blank" rel="noopener">Message him on LinkedIn</a>`;
-  if (C.email) html += `<a class="btn ghost" href="mailto:${esc(C.email)}?subject=${subject}&body=${encodeURIComponent(msg)}">Email ${esc(C.email)}</a>`;
-  if (C.phone) html += `<a class="btn ghost" href="tel:${esc(C.phone.replace(/\s/g, ""))}">Call ${esc(C.phone)}</a>`;
-  if (C.cv) html += `<a class="btn ghost" href="${esc(C.cv)}" download>Download his CV</a>`;
+  if (C.linkedin) html += `<a class="btn" href="${esc(C.linkedin)}" target="_blank" rel="noopener">${esc(t("linkedinBtn"))}</a>`;
+  if (C.email) html += `<a class="btn ghost" href="mailto:${esc(C.email)}?subject=${subject}&body=${encodeURIComponent(msg)}">${esc(t("emailBtn", { e: C.email }))}</a>`;
+  if (C.phone) html += `<a class="btn ghost" href="tel:${esc(C.phone.replace(/\s/g, ""))}">${esc(t("callBtn", { p: C.phone }))}</a>`;
+  if (C.cv) html += `<a class="btn ghost" href="${esc(C.cv)}" download>${esc(t("cvBtn"))}</a>`;
   html += `</div>`;
-  html += `<p style="margin-top:10px">Ready-to-send message:</p><div class="quote">${esc(msg)}</div><div class="actions"><button class="btn ghost" data-a="copy">Copy message</button></div>`;
+  html += `<p style="margin-top:10px">${esc(t("readyMsg"))}</p><div class="quote">${esc(msg)}</div><div class="actions"><button class="btn ghost" data-a="copy">${esc(t("copy"))}</button></div>`;
   const wrap = document.createElement("div"); wrap.className = "msg bot";
   const b = document.createElement("div"); b.className = "bubble"; b.innerHTML = html;
   wrap.appendChild(b); chat.appendChild(wrap); chat.scrollTop = chat.scrollHeight;
   b.querySelector('[data-a="copy"]').onclick = async e => {
-    try { await navigator.clipboard.writeText(msg); e.target.textContent = "Copied!"; } catch { e.target.textContent = "Select the text above to copy it"; }
+    try { await navigator.clipboard.writeText(msg); e.target.textContent = t("copied"); } catch { e.target.textContent = t("copyFail"); }
   };
-  history.push({ role: "assistant", content: `I shared Mattis's contact details (LinkedIn${C.email ? ", email" : ""}${C.phone ? ", phone" : ""}).` });
+  history.push({ role: "assistant", content: t("sharedContact", { rest: `${C.email ? ", email" : ""}${C.phone ? ", phone" : ""}` }) });
 }
 
-$("contactTop").onclick = () => ask("How can I contact him?");
+$("contactTop").onclick = () => { if (!chatStarted) startChat(); ask(t("contactQ")); };
 
 // ---------- Engine ----------
-let webllm = null, engine = null, engineState = "none"; // none | unsupported | idle | loading | ready
-let f16 = true, busy = false;
-const history = []; // {role, content}
-
-function setEngine(state, text) {
-  engineState = state;
-  $("dot").className = "dot" + (state === "ready" ? " ok" : state === "loading" ? " busy" : "");
-  $("engineText").textContent = text;
-}
+let webllm = null, engine = null, engineState = "none"; // none | unsupported | idle | loading | ready | failed
+let f16 = true, busy = false, current = null, progress = 0, loadError = "";
+const device = { probed: false, gpu: false, reason: "", cached: {} };
 const modelId = i => `${MODELS[i].base}-${f16 ? "q4f16_1" : "q4f32_1"}-MLC`;
+const savedModel = () => { const v = store.get("model"); return v === "quick" ? "quick" : v !== null && OFFERED.includes(+v) ? +v : null; };
 
-async function detect() {
-  if (!("gpu" in navigator)) return unsupported("This browser does not support WebGPU, so the on-device AI cannot run here.");
-  let adapter = null;
-  try { adapter = await navigator.gpu.requestAdapter(); } catch {}
-  if (!adapter) return unsupported("WebGPU is available but no compatible GPU was found on this device.");
-  f16 = adapter.features.has("shader-f16");
-
-  const sel = $("modelSelect");
-  OFFERED.forEach(i => sel.add(new Option(MODELS[i].label, i)));
-  let saved = LOW_MEM ? LIGHTEST : DEFAULT_MODEL;
-  const v = store.get("model");
-  if (v !== null && OFFERED.includes(+v)) saved = +v;
-
-  const crash = readCrash();
-  if (crash) {
-    store.set(CRASHED_KEY, "1");
-    if (crash.model !== LIGHTEST && OFFERED.includes(LIGHTEST)) saved = LIGHTEST;
-    const w = $("warn");
-    w.textContent = crash.model === LIGHTEST || LOW_MEM
-      ? "The AI assistant needed more memory than this device could give it, so the page reloaded. Quick answers below work fine; you can still try the AI again."
-      : "The previous AI model was too heavy for this device, so the page reloaded. The lightest model is now selected.";
-    w.style.display = "block";
+async function probe() {
+  if (!("gpu" in navigator)) device.reason = "noWebgpu";
+  else {
+    let adapter = null;
+    try { adapter = await navigator.gpu.requestAdapter(); } catch {}
+    if (!adapter) device.reason = "noAdapter";
+    else { device.gpu = true; f16 = adapter.features.has("shader-f16"); }
   }
-  sel.value = saved;
-  sel.hidden = OFFERED.length < 2; $("loadBtn").hidden = false;
-  if (store.get(CRASHED_KEY)) $("loadBtn").textContent = "Try the AI assistant";
-  setEngine("idle", LOW_MEM
-    ? "Quick answers come straight from the profile. On this device the AI assistant uses a light model (~0.7 GB download)."
-    : "Your device can run the AI assistant locally on its GPU. Meanwhile, quick answers come straight from the profile.");
+  device.probed = true;
+  if (engineState === "none") engineState = device.gpu ? "idle" : "unsupported";
+}
 
-  // If the chosen model is already downloaded, start it automatically, unless it already crashed on this device.
-  if (store.get(CRASHED_KEY)) return;
+// Which models are already downloaded (shown on the cards; those start without a download).
+async function checkCache() {
+  if (!device.gpu) return;
   try {
-    webllm = await import(WEBLLM_URL);
-    if (await webllm.hasModelInCache(modelId(saved))) loadModel();
+    webllm ??= await import(WEBLLM_URL);
+    for (const i of OFFERED) device.cached[i] = await webllm.hasModelInCache(modelId(i));
   } catch {}
 }
 
-function unsupported(msg) {
-  setEngine("unsupported", "Quick-answer mode: answers come straight from Mattis's profile.");
+function progressText() { return progress < 1 ? t("downloading", { p: Math.round(progress * 100) }) : t("preparing"); }
+
+function refreshEngine() {
+  const s = engineState, pref = savedModel();
+  $("dot").className = "dot" + (s === "ready" ? " ok" : s === "loading" ? " busy" : "");
+  $("engineText").textContent =
+    s === "ready" ? t("engReady", { m: MODELS[current].short }) :
+    s === "loading" ? progressText() :
+    s === "failed" ? t("engFail") :
+    s === "unsupported" || pref === "quick" ? t("engQuick") : s === "none" ? t("checking") : t("engIdle");
+  const bar = $("bar"); bar.hidden = s !== "loading"; bar.firstElementChild.style.width = `${Math.round(progress * 100)}%`;
+  const start = $("startBtn");
+  start.hidden = !(s === "idle" || s === "failed");
+  if (typeof pref === "number") { start.textContent = s === "failed" ? t("retry") : t("startAi", { size: MODELS[pref].size[LANG] }); start.onclick = () => loadModel(pref); }
+  else { start.textContent = t("useAi"); start.onclick = openSettings; }
+  $("settingsBtn").hidden = !chatStarted || s === "unsupported";
   const w = $("warn");
-  w.textContent = msg + " For the full conversational assistant, open this page in a recent Chrome, Edge or Safari on a computer with a GPU.";
-  w.style.display = "block";
+  const msg = s === "unsupported" ? t(device.reason || "noWebgpu") : s === "failed" ? loadError : "";
+  w.textContent = msg; w.hidden = !msg;
+  fillDl();
 }
 
-async function loadModel() {
-  if (engineState === "loading" || engineState === "ready") return;
-  const sel = $("modelSelect"), btn = $("loadBtn"), bar = $("bar");
-  const i = +sel.value;
-  store.set("model", String(i));
-  sel.disabled = true; btn.disabled = true; bar.style.display = "block";
-  setEngine("loading", "Loading the AI model… (first time only: it is downloaded once, then cached on this device)");
+async function loadModel(i) {
+  if (engineState === "loading" || engineState === "ready" || !device.gpu) return;
+  current = i; store.set("model", String(i));
+  engineState = "loading"; progress = 0; loadError = "";
+  refreshEngine();
   try {
     webllm ??= await import(WEBLLM_URL);
     markBusy("load", i);
     engine = await webllm.CreateMLCEngine(modelId(i), {
-      initProgressCallback: r => {
-        bar.firstElementChild.style.width = `${Math.round((r.progress || 0) * 100)}%`;
-        if (r.text) $("engineText").textContent = r.text;
-      },
+      initProgressCallback: r => { progress = Math.min(1, r.progress || 0); refreshEngine(); },
     }, CHAT_OPTS);
     clearBusy();
-    bar.style.display = "none"; btn.hidden = true;
-    setEngine("ready", `AI assistant ready · running locally on your GPU (${MODELS[i].base}).`);
+    engineState = "ready"; device.cached[i] = true;
   } catch (e) {
     console.error(e);
     clearBusy();
-    bar.style.display = "none"; sel.disabled = false; btn.disabled = false;
-    setEngine("idle", LOW_MEM || +sel.value === LIGHTEST ? "Could not load the model. Quick answers still work." : "Could not load the model. Try the lightest model, or keep using quick answers.");
-    const w = $("warn"); w.textContent = String(e?.message || e).slice(0, 300); w.style.display = "block";
+    engineState = "failed"; loadError = String(e?.message || e).slice(0, 300);
   }
+  refreshEngine();
 }
-$("loadBtn").onclick = loadModel;
-$("modelSelect").onchange = () => store.set("model", $("modelSelect").value);
+
+// ---------- Onboarding steps ----------
+// 1 = model, 2 = language (while the model downloads), 3 = position. Revisits only show step 3.
+const wz = { steps: [], idx: 0, mode: "onboard", model: null, recruiting: null, role: null, other: "", crash: null, langAtOpen: null, modelAtOpen: null };
+
+function showWizard(steps, mode) {
+  Object.assign(wz, { steps, mode, idx: 0 });
+  wizard.hidden = false; $("chatUI").hidden = true;
+  renderWizard();
+}
+
+const dots = n => `<b aria-label="${n}/3">${"●".repeat(n)}${"○".repeat(3 - n)}</b>`;
+
+function stepModel() {
+  let h = `<h2>${esc(t("s1Title"))}</h2>`;
+  if (!device.probed) return h + `<p class="muted">${esc(t("checking"))}</p>`;
+  h += `<p class="muted">${esc(t("s1Intro"))}</p>`;
+  h += `<p class="device">${esc(device.gpu ? t(IS_MOBILE ? "devMobile" : LOW_MEM ? "devLowMem" : "devDesktop") : t(device.reason))}</p>`;
+  if (wz.crash) h += `<div class="wz-warn" style="margin:0 0 14px">${esc(t(wz.crash.model === LIGHTEST || LOW_MEM ? "crashLight" : "crashHeavy"))}</div>`;
+  const opts = device.gpu ? [...OFFERED, "quick"] : ["quick"];
+  h += `<div class="opts">`;
+  for (const o of opts) {
+    const sel = wz.model === o, rec = o === (device.gpu ? RECOMMENDED : "quick");
+    const badges = (rec ? `<span class="badge">${esc(t("recommended"))}</span>` : "") + (device.cached[o] ? `<span class="badge soft">${esc(t("cached"))}</span>` : "");
+    if (o === "quick") {
+      h += `<button type="button" class="opt${sel ? " selected" : ""}" data-act="model" data-v="quick" aria-pressed="${sel}"><span class="opt-head"><strong>${esc(t("qName"))}</strong><span class="opt-meta">${esc(t("qMeta"))}</span>${badges}</span><span class="opt-desc">${esc(t("qDesc"))}</span></button>`;
+    } else {
+      const m = MODELS[o];
+      h += `<button type="button" class="opt${sel ? " selected" : ""}" data-act="model" data-v="${o}" aria-pressed="${sel}"><span class="opt-head"><strong>${esc(t(`m${o}name`))}</strong><span class="opt-meta">${esc(m.short)} · ${esc(m.size[LANG])}</span>${badges}</span><span class="opt-desc">${esc(t(`m${o}desc`))}</span><span class="opt-meter">${esc(t("speed"))} ${dots(m.speed)} · ${esc(t("accuracy"))} ${dots(m.quality)}</span></button>`;
+    }
+  }
+  h += `</div>`;
+  const warn = wz.model === BIGGEST ? "warnBig" : wz.model === LIGHTEST ? "warnSmall" : wz.model === "quick" && device.gpu ? "warnQuick" : "";
+  if (warn) h += `<div class="wz-warn">${esc(t(warn))}</div>`;
+  const nextLabel = typeof wz.model === "number" && !device.cached[wz.model] && wz.mode !== "settings" ? t("downloadContinue") : t("next");
+  h += `<div class="wz-actions">${wz.mode === "settings" ? `<button type="button" class="ghost" data-act="cancel">${esc(t("cancel"))}</button>` : ""}<button type="button" data-act="next"${wz.model === null ? " disabled" : ""}>${esc(nextLabel)}</button></div>`;
+  return h;
+}
+
+function stepLang() {
+  let h = `<h2>${esc(t("s2Title"))}</h2><div id="wzDl"></div><div class="langs">`;
+  for (const [v, label] of [["en", "English"], ["fr", "Français"]]) {
+    if (v === "fr" && !FR) continue;
+    h += `<button type="button" class="opt${LANG === v ? " selected" : ""}" data-act="lang" data-v="${v}" lang="${v}" aria-pressed="${LANG === v}">${label}</button>`;
+  }
+  h += `</div>`;
+  const last = wz.idx === wz.steps.length - 1;
+  h += `<div class="wz-actions">${canGoBack() ? `<button type="button" class="ghost" data-act="back">${esc(t("back"))}</button>` : ""}<button type="button" data-act="next">${esc(last ? t("apply") : t("next"))}</button></div>`;
+  return h;
+}
+
+function stepRole() {
+  const roles = localize(LANG).roles.filter(r => r.id !== "other");
+  let h = `<h2>${esc(t("s3Title"))}</h2><div id="wzDl"></div><div class="opts">`;
+  for (const v of ["yes", "no"]) h += `<button type="button" class="opt${wz.recruiting === v ? " selected" : ""}" data-act="recruit" data-v="${v}" aria-pressed="${wz.recruiting === v}"><strong>${esc(t(v))}</strong></button>`;
+  h += `</div>`;
+  if (wz.recruiting === "yes") {
+    h += `<p class="wz-label">${esc(t("whichRole"))}</p><div class="wz-roles">`;
+    for (const r of roles) h += `<button type="button" class="chip${wz.role === r.id ? " selected" : ""}" data-act="role" data-v="${r.id}">${esc(r.label)}</button>`;
+    h += `<button type="button" class="chip${wz.role === "other" ? " selected" : ""}" data-act="role" data-v="other">${esc(t("other"))}</button></div>`;
+    if (wz.role === "other") h += `<input class="wz-other" id="wzOther" maxlength="80" placeholder="${esc(t("otherPh"))}" value="${esc(wz.other)}" aria-label="${esc(t("otherPh"))}">`;
+  }
+  h += `<div class="wz-actions">${canGoBack() ? `<button type="button" class="ghost" data-act="back">${esc(t("back"))}</button>` : ""}<button type="button" data-act="start"${roleReady() ? "" : " disabled"}>${esc(t("startChat"))}</button></div>`;
+  return h;
+}
+const roleReady = () => wz.recruiting === "no" || (wz.recruiting === "yes" && wz.role && (wz.role !== "other" || wz.other.trim()));
+// Going back to the model step is not possible once a download has started.
+const canGoBack = () => wz.idx > 0 && !(wz.steps[wz.idx - 1] === 1 && wz.mode !== "settings" && (engineState === "loading" || engineState === "ready"));
+
+function renderWizard() {
+  const step = wz.steps[wz.idx];
+  let h = "";
+  if (wz.steps.length > 1) h += `<p class="wz-count">${esc(t("stepOf", { n: wz.idx + 1, total: wz.steps.length }))}</p><div class="wz-dots">${wz.steps.map((_, i) => `<span class="${i <= wz.idx ? "on" : ""}"></span>`).join("")}</div>`;
+  h += `<div>${{ 1: stepModel, 2: stepLang, 3: stepRole }[step]()}</div>`;
+  wizard.innerHTML = h;
+  fillDl();
+  const other = $("wzOther");
+  if (other) other.oninput = () => { wz.other = other.value; wizard.querySelector('[data-act="start"]').disabled = !roleReady(); };
+}
+
+// Download progress shown inside steps 2 and 3, updated in place so typing in the "Other" field is not interrupted.
+function fillDl() {
+  const box = $("wzDl");
+  if (!box) return;
+  const s = engineState;
+  if (s === "loading") {
+    box.className = "wz-dl";
+    box.innerHTML = `<p>${esc(progressText())}</p><div class="bar"><div style="width:${Math.round(progress * 100)}%"></div></div>${wz.steps[wz.idx] === 2 ? `<p class="small" style="margin-top:6px">${esc(t("s2Note"))}</p>` : ""}`;
+  } else if (s === "ready") { box.className = "wz-dl ok"; box.innerHTML = `<p>✓ ${esc(t("modelReady"))}</p>`; }
+  else if (s === "failed") { box.className = "wz-warn"; box.style.margin = "0 0 16px"; box.textContent = t("dlFail"); }
+  else { box.className = ""; box.innerHTML = ""; }
+}
+
+wizard.addEventListener("click", e => {
+  const b = e.target.closest("[data-act]");
+  if (!b || b.disabled) return;
+  const v = b.dataset.v;
+  switch (b.dataset.act) {
+    case "model": wz.model = v === "quick" ? "quick" : +v; break;
+    case "lang": LANG = v; applyTexts(); break;
+    case "recruit": wz.recruiting = v; break;
+    case "role": wz.role = v; break;
+    case "back": wz.idx--; break;
+    case "cancel": closeSettings(false); return;
+    case "next": return wizardNext();
+    case "start": return startChat();
+  }
+  renderWizard();
+  if (b.dataset.act === "role" && v === "other") $("wzOther")?.focus();
+});
+
+function wizardNext() {
+  const step = wz.steps[wz.idx];
+  if (step === 1 && wz.mode !== "settings") {
+    store.set("model", String(wz.model));
+    if (typeof wz.model === "number") { store.del(CRASHED_KEY); loadModel(wz.model); }
+  }
+  if (step === 2) store.set("lang", LANG);
+  if (wz.idx === wz.steps.length - 1) return closeSettings(true);
+  wz.idx++;
+  renderWizard();
+}
+
+function openSettings() {
+  wz.langAtOpen = LANG; wz.modelAtOpen = savedModel();
+  wz.model = engineState === "ready" ? current : savedModel() ?? (device.gpu ? RECOMMENDED : "quick");
+  showWizard([1, 2], "settings");
+}
+
+// End of the settings steps: a new language or a different model needs a fresh page (the model reloads from cache).
+function closeSettings(apply) {
+  if (!apply) { LANG = wz.langAtOpen; applyTexts(); }
+  else {
+    const m = wz.model, running = engineState === "ready" || engineState === "loading";
+    const modelChanged = running ? m !== current : m !== "quick";
+    store.set("lang", LANG); store.set("model", String(m));
+    if (LANG !== wz.langAtOpen || (running && modelChanged)) {
+      if (typeof m === "number") { session.set("loadNow", "1"); store.del(CRASHED_KEY); }
+      location.reload();
+      return;
+    }
+    if (typeof m === "number" && modelChanged) loadModel(m);
+  }
+  wizard.hidden = true; $("chatUI").hidden = false;
+  refreshEngine();
+}
+
+function startChat() {
+  if (chatStarted) return;
+  chatStarted = true;
+  store.set("lang", LANG);
+  buildContent(); applyTexts();
+  wizard.hidden = true; $("chatUI").hidden = false;
+  botSay(F.welcome);
+  if (wz.recruiting === "yes" && roleReady()) {
+    chooseRole(wz.role === "other" ? customRole(wz.other.trim()) : P.roles.find(r => r.id === wz.role));
+  } else if (wz.recruiting === "no") {
+    lead.exploring = true;
+    userSay(t("exploring"));
+    botSay(F.explore);
+    nextStep();
+  } else nextStep();
+  refreshEngine();
+  if (!IS_MOBILE) input.focus();
+}
 
 // ---------- Answering ----------
-function trimToSentence(t) {
-  const end = Math.max(...[...t.matchAll(/[.!?](?=\s|$)/g)].map(m => m.index));
-  return end > t.length * 0.4 ? t.slice(0, end + 1) : t.trimEnd() + "…";
+function trimToSentence(text) {
+  const end = Math.max(...[...text.matchAll(/[.!?](?=\s|$)/g)].map(m => m.index));
+  return end > text.length * 0.4 ? text.slice(0, end + 1) : text.trimEnd() + "…";
 }
 
 function quickAnswer(q) {
   if (isPitch(q)) return P.core;
   const [top, ...rest] = retrieve(q, 3);
   let a = `**${top.title}**\n${top.text}`;
-  if (rest.length) a += `\n\nRelated topics: ${rest.map(d => d.title).join(" · ")}`;
+  if (rest.length) a += `\n\n${t("related")}${LANG === "fr" ? " : " : ": "}${rest.map(d => d.title).join(" · ")}`;
   return a;
 }
 
 async function ask(q) {
   q = q.trim();
-  if (!q || busy) return;
+  if (!q || busy || !chatStarted) return;
   input.value = ""; autosize();
-  addMsg("user", q);
-  history.push({ role: "user", content: q });
+  userSay(q);
 
   // Recruiter states the role they are hiring for.
   if (!lead.role) {
@@ -448,13 +830,13 @@ async function ask(q) {
   }
 
   // Conversion: contact requests always get the contact card, whatever the mode.
-  if (CONTACT_INTENT.test(q)) { showContact(); nextStep(); return; }
+  if (CONTACT_INTENT[LANG].test(q)) { showContact(); nextStep(); return; }
 
   retrieve(q, 1).forEach(d => seen.add(d.id));
   answers++;
 
   if (engineState !== "ready") {
-    const tag = engineState === "unsupported" ? "Quick answer from the profile" : "Quick answer from the profile · start the AI assistant above for a conversational answer";
+    const tag = engineState === "loading" ? t("quickTagLoading") : engineState === "idle" || engineState === "failed" ? t("quickTagIdle") : t("quickTag");
     botSay(quickAnswer(q), tag);
     afterAnswer(q);
     return;
@@ -463,10 +845,8 @@ async function ask(q) {
   busy = true; sendBtn.disabled = true;
   const prevUser = history.filter(m => m.role === "user").at(-2)?.content || "";
   const ctx = retrieve(q + " " + prevUser, BUDGET.sections).map(d => `## ${d.title}\n${d.text}`).join("\n\n");
-  const leadInfo = lead.role
-    ? `The recruiter is hiring for: ${lead.role.label}. Tie your answers to that role.`
-    : `You don't know yet which role the recruiter is hiring for. If it fits naturally, end your answer by asking what role they are recruiting for.`;
-  const system = `${RULES}\n\n# Recruiter\n${leadInfo}\n\n# Profile summary\n${P.core}\n\n# Relevant details\n${ctx}`;
+  const H = LANG === "fr" ? ["Recruteur", "Résumé du profil", "Détails pertinents"] : ["Recruiter", "Profile summary", "Relevant details"];
+  const system = `${rules()}\n\n# ${H[0]}\n${leadInfo()}\n\n# ${H[1]}\n${P.core}\n\n# ${H[2]}\n${ctx}`;
   const recent = history.slice(-1 - BUDGET.history, -1).map(m => ({ role: m.role, content: m.content.slice(0, 700) }));
   const messages = [{ role: "system", content: system }, ...recent, { role: "user", content: q }];
 
@@ -474,7 +854,7 @@ async function ask(q) {
   bubble.classList.add("cursor");
   let text = "";
   try {
-    markBusy("generate", +$("modelSelect").value);
+    markBusy("generate", current);
     const stream = await engine.chat.completions.create({ messages, stream: true, temperature: 0.4, top_p: 0.9, max_tokens: BUDGET.maxTokens });
     let cut = false;
     for await (const chunk of stream) {
@@ -491,7 +871,7 @@ async function ask(q) {
     console.error(e);
     clearBusy();
     text = text || quickAnswer(q);
-    bubble.innerHTML = render(text) + `<span class="tag">The AI hit an error, so this is a quick answer from the profile.</span>`;
+    bubble.innerHTML = render(text) + `<span class="tag">${esc(t("aiError"))}</span>`;
   }
   bubble.classList.remove("cursor");
   history.push({ role: "assistant", content: text });
@@ -508,10 +888,30 @@ form.onsubmit = e => { e.preventDefault(); ask(input.value); };
 input.addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); ask(input.value); } });
 function autosize() { input.style.height = "46px"; input.style.height = Math.min(input.scrollHeight + 2, 140) + "px"; }
 input.addEventListener("input", autosize);
+$("settingsBtn").onclick = openSettings;
 
-botSay(F.welcome);
-nextStep();
-detect();
+// ---------- Start ----------
+async function boot() {
+  applyTexts();
+  const crash = readCrash();
+  if (crash) store.set(CRASHED_KEY, "1");
+  wz.crash = crash;
+  const onboarded = !!store.get("lang") && savedModel() !== null;
+  // First visit, or the AI crashed the page: all steps. Otherwise only the position step.
+  showWizard(onboarded && !crash ? [3] : [1, 2, 3], "onboard");
+  await probe();
+  let pref = savedModel();
+  if (crash) pref = crash.model !== LIGHTEST && OFFERED.includes(LIGHTEST) && !LOW_MEM ? LIGHTEST : "quick";
+  wz.model = !device.gpu ? "quick" : pref ?? RECOMMENDED;
+  refreshEngine();
+  if (wz.steps[wz.idx] === 1) renderWizard();
+  await checkCache();
+  if (wz.steps[wz.idx] === 1 && !wizard.hidden) renderWizard();
+  // Revisit: start the saved model if it is already downloaded (or the settings just changed it), unless it crashed here.
+  const forced = session.take("loadNow");
+  if (onboarded && !crash && typeof pref === "number" && device.gpu && (forced || (device.cached[pref] && !store.get(CRASHED_KEY)))) loadModel(pref);
+}
+boot();
 </script>
 </body>
 </html>
