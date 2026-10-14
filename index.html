@@ -188,7 +188,7 @@ if (!BASE) {
 const T = {
   en: {
     title: "Ask about Mattis", contactTop: "Contact Mattis", placeholder: "Ask anything about Mattis's profile…", send: "Send",
-    footer: "The AI runs entirely on your device; your questions are never sent to a server. Answers are generated from Mattis's CV and theses and may contain mistakes.",
+    footer: "The AI runs entirely on your device and is deleted when you close the tab; your questions are never sent to a server. Answers are generated from Mattis's CV and theses and may contain mistakes.",
     settings: "Model & language", startAi: "Start the AI assistant ({size})", useAi: "Use the AI assistant", retry: "Try again",
     checking: "Checking your device…",
     engQuick: "Quick-answer mode: answers come straight from Mattis's profile.",
@@ -196,7 +196,7 @@ const T = {
     engLoading: "Loading the AI model… Quick answers work in the meantime.",
     engReady: "AI assistant ready · running locally on your GPU ({m}).",
     engFail: "Could not load the AI model. Quick answers still work.",
-    downloading: "Downloading the AI model: {p}% (first time only, then kept on this device)",
+    downloading: "Downloading the AI model: {p}% (it is deleted from this device when you close the tab)",
     preparing: "Preparing the AI model on your graphics card…",
     modelReady: "AI model ready.",
     dlFail: "The AI model could not be loaded. You can continue with quick answers.",
@@ -206,11 +206,11 @@ const T = {
     crashHeavy: "The previous AI model was too heavy for this device, so the page reloaded. The lightest model is now selected.",
     stepOf: "Step {n} of {total}",
     s1Title: "Choose the AI model",
-    s1Intro: "The assistant runs on your device, on its graphics card, so nothing is sent to a server. A larger model gives better answers but takes longer to reply.",
+    s1Intro: "The assistant runs on your device, on its graphics card, so nothing is sent to a server. A larger model gives better answers but takes longer to reply. The model is deleted from your device when you close the tab.",
     devDesktop: "Your device: computer with a compatible graphics card. With an AI model, a small search model (~120 MB) is also downloaded so the assistant understands rephrased questions.",
     devMobile: "Your device: phone or tablet. Larger models would run out of memory here, so only the lightest one is offered.",
     devLowMem: "Your device: computer with limited memory. Only the lightest model is offered.",
-    recommended: "Recommended for your device", cached: "Already downloaded",
+    recommended: "Recommended for your device",
     speed: "Speed", accuracy: "Accuracy",
     m0name: "Balanced", m0desc: "Good answers with reasonable response times on most computers.",
     m1name: "Best answers", m1desc: "The most accurate and natural answers.",
@@ -245,7 +245,7 @@ const T = {
   },
   fr: {
     title: "Questions sur Mattis", contactTop: "Contacter Mattis", placeholder: "Votre question sur Mattis…", send: "Envoyer",
-    footer: "L'IA tourne entièrement sur votre appareil : vos questions ne sont jamais envoyées à un serveur. Les réponses sont générées à partir du CV et des mémoires de Mattis et peuvent contenir des erreurs.",
+    footer: "L'IA tourne entièrement sur votre appareil et elle est supprimée à la fermeture de l'onglet : vos questions ne sont jamais envoyées à un serveur. Les réponses sont générées à partir du CV et des mémoires de Mattis et peuvent contenir des erreurs.",
     settings: "Modèle et langue", startAi: "Lancer l'assistant IA ({size})", useAi: "Utiliser l'assistant IA", retry: "Réessayer",
     checking: "Analyse de votre appareil…",
     engQuick: "Mode réponses rapides : les réponses viennent directement du profil de Mattis.",
@@ -253,7 +253,7 @@ const T = {
     engLoading: "Chargement du modèle d'IA… Les réponses rapides fonctionnent en attendant.",
     engReady: "Assistant IA prêt · il tourne sur votre carte graphique ({m}).",
     engFail: "Le modèle d'IA n'a pas pu être chargé. Les réponses rapides fonctionnent toujours.",
-    downloading: "Téléchargement du modèle d'IA : {p} % (la première fois seulement, il reste ensuite sur cet appareil)",
+    downloading: "Téléchargement du modèle d'IA : {p} % (il est supprimé de cet appareil à la fermeture de l'onglet)",
     preparing: "Préparation du modèle d'IA sur votre carte graphique…",
     modelReady: "Modèle d'IA prêt.",
     dlFail: "Le modèle d'IA n'a pas pu être chargé. Vous pouvez continuer avec les réponses rapides.",
@@ -263,11 +263,11 @@ const T = {
     crashHeavy: "Le modèle précédent était trop lourd pour cet appareil, la page s'est donc rechargée. Le modèle le plus léger est maintenant sélectionné.",
     stepOf: "Étape {n} sur {total}",
     s1Title: "Choisissez le modèle d'IA",
-    s1Intro: "L'assistant tourne sur votre appareil, sur sa carte graphique : rien n'est envoyé à un serveur. Un modèle plus gros donne de meilleures réponses mais met plus de temps à répondre.",
+    s1Intro: "L'assistant tourne sur votre appareil, sur sa carte graphique : rien n'est envoyé à un serveur. Un modèle plus gros donne de meilleures réponses mais met plus de temps à répondre. Le modèle est supprimé de votre appareil à la fermeture de l'onglet.",
     devDesktop: "Votre appareil : ordinateur avec une carte graphique compatible. Avec un modèle d'IA, un petit modèle de recherche (~120 Mo) est aussi téléchargé pour que l'assistant comprenne les questions reformulées.",
     devMobile: "Votre appareil : téléphone ou tablette. Les modèles plus gros manqueraient de mémoire ici, seul le plus léger est proposé.",
     devLowMem: "Votre appareil : ordinateur avec peu de mémoire. Seul le modèle le plus léger est proposé.",
-    recommended: "Conseillé pour votre appareil", cached: "Déjà téléchargé",
+    recommended: "Conseillé pour votre appareil",
     speed: "Rapidité", accuracy: "Précision",
     m0name: "Équilibré", m0desc: "De bonnes réponses avec des temps de réponse raisonnables sur la plupart des ordinateurs.",
     m1name: "Meilleures réponses", m1desc: "Les réponses les plus précises et les plus naturelles.",
@@ -542,7 +542,7 @@ $("contactTop").onclick = () => { if (!chatStarted) startChat(); ask(t("contactQ
 // ---------- Engine ----------
 let webllm = null, engine = null, engineState = "none"; // none | unsupported | idle | loading | ready | failed
 let f16 = true, busy = false, current = null, progress = 0, loadError = "";
-const device = { probed: false, gpu: false, reason: "", cached: {} };
+const device = { probed: false, gpu: false, reason: "" };
 const modelId = i => `${MODELS[i].base}-${f16 ? "q4f16_1" : "q4f32_1"}-MLC`;
 const savedModel = () => { const v = store.get("model"); return v === "quick" ? "quick" : v !== null && OFFERED.includes(+v) ? +v : null; };
 
@@ -558,13 +558,15 @@ async function probe() {
   if (engineState === "none") engineState = device.gpu ? "idle" : "unsupported";
 }
 
-// Which models are already downloaded (shown on the cards; those start without a download).
-async function checkCache() {
-  if (!device.gpu) return;
+// Nothing is kept on the visitor's device: the model files are deleted from the browser cache as soon as the model
+// is in memory, and leftovers from an earlier visit (an interrupted download, an older version of this page) are
+// deleted when the page opens. Closing the tab then frees the memory and leaves nothing behind.
+async function deleteStoredModels(ids = MODELS.flatMap(m => ["q4f16_1", "q4f32_1"].map(q => `${m.base}-${q}-MLC`))) {
   try {
     webllm ??= await import(WEBLLM_URL);
-    for (const i of OFFERED) device.cached[i] = await webllm.hasModelInCache(modelId(i));
+    for (const id of ids) { try { await webllm.deleteModelAllInfoInCache(id); } catch {} }
   } catch {}
+  try { await caches.delete("transformers-cache"); } catch {}
 }
 
 function progressText() { return progress < 1 ? t("downloading", { p: Math.round(progress * 100) }) : t("preparing"); }
@@ -601,7 +603,8 @@ async function loadModel(i) {
       initProgressCallback: r => { progress = Math.min(1, r.progress || 0); refreshEngine(); },
     }, CHAT_OPTS);
     clearBusy();
-    engineState = "ready"; device.cached[i] = true;
+    engineState = "ready";
+    deleteStoredModels([modelId(i)]);
     if (!LOW_MEM) startSemantic();
   } catch (e) {
     console.error(e);
@@ -615,16 +618,19 @@ async function loadModel(i) {
 // with each profile section and validated answer. Keyword search is used until it is ready, or if it fails.
 let semState = "off"; // off | loading | ready | failed
 let resolveChat; const chatReady = new Promise(r => { resolveChat = r; });
+async function embedProfile() {
+  const target = idx, jobs = target.embeddingJobs();
+  const sv = await Semantic.embed(jobs.sections.map(x => x.text), "passage");
+  const fv = await Semantic.embed(jobs.faq.map(x => x.text), "query");
+  target.setVectors(sv, fv);
+}
 async function startSemantic() {
   if (semState !== "off" || !window.Semantic) return;
   semState = "loading"; refreshEngine();
   try {
     await Semantic.load();
     await chatReady; // the profile is built in the chosen language when the chat starts
-    const jobs = idx.embeddingJobs();
-    const sv = await Semantic.embed(jobs.sections.map(x => x.text), "passage");
-    const fv = await Semantic.embed(jobs.faq.map(x => x.text), "query");
-    idx.setVectors(sv, fv);
+    await embedProfile();
     semState = "ready";
   } catch (e) {
     console.error("Search by meaning unavailable:", e);
@@ -655,7 +661,7 @@ function stepModel() {
   h += `<div class="opts">`;
   for (const o of opts) {
     const sel = wz.model === o, rec = o === (device.gpu ? RECOMMENDED : "quick");
-    const badges = (rec ? `<span class="badge">${esc(t("recommended"))}</span>` : "") + (device.cached[o] ? `<span class="badge soft">${esc(t("cached"))}</span>` : "");
+    const badges = (rec ? `<span class="badge">${esc(t("recommended"))}</span>` : "") ;
     if (o === "quick") {
       h += `<button type="button" class="opt${sel ? " selected" : ""}" data-act="model" data-v="quick" aria-pressed="${sel}"><span class="opt-head"><strong>${esc(t("qName"))}</strong><span class="opt-meta">${esc(t("qMeta"))}</span>${badges}</span><span class="opt-desc">${esc(t("qDesc"))}</span></button>`;
     } else {
@@ -666,7 +672,7 @@ function stepModel() {
   h += `</div>`;
   const warn = wz.model === BIGGEST ? "warnBig" : wz.model === LIGHTEST ? "warnSmall" : wz.model === "quick" && device.gpu ? "warnQuick" : "";
   if (warn) h += `<div class="wz-warn">${esc(t(warn))}</div>`;
-  const nextLabel = typeof wz.model === "number" && !device.cached[wz.model] && wz.mode !== "settings" ? t("downloadContinue") : t("next");
+  const nextLabel = typeof wz.model === "number" && wz.mode !== "settings" ? t("downloadContinue") : t("next");
   h += `<div class="wz-actions">${wz.mode === "settings" ? `<button type="button" class="ghost" data-act="cancel">${esc(t("cancel"))}</button>` : ""}<button type="button" data-act="next"${wz.model === null ? " disabled" : ""}>${esc(nextLabel)}</button></div>`;
   return h;
 }
@@ -761,22 +767,40 @@ function openSettings() {
   showWizard([1, 2], "settings");
 }
 
-// End of the settings steps: a new language or a different model needs a fresh page (the model reloads from cache).
-function closeSettings(apply) {
-  if (!apply) { LANG = wz.langAtOpen; applyTexts(); }
+// End of the settings steps. A different model replaces the one in memory; a new language restarts the conversation
+// in that language (from the position step).
+async function closeSettings(apply) {
+  if (!apply) LANG = wz.langAtOpen;
   else {
-    const m = wz.model, running = engineState === "ready" || engineState === "loading";
-    const modelChanged = running ? m !== current : m !== "quick";
+    const m = wz.model, langChanged = LANG !== wz.langAtOpen;
     store.set("lang", LANG); store.set("model", String(m));
-    if (LANG !== wz.langAtOpen || (running && modelChanged)) {
+    if (engineState === "loading" && m !== current) {
+      // A download is in progress: start again cleanly with the new choice.
       if (typeof m === "number") { session.set("loadNow", "1"); store.del(CRASHED_KEY); }
       location.reload();
       return;
     }
-    if (typeof m === "number" && modelChanged) loadModel(m);
+    if (engineState === "ready" && m !== current) {
+      try { await engine.unload(); } catch {}
+      engine = null; engineState = "idle";
+    }
+    if (typeof m === "number" && engineState !== "ready" && engineState !== "loading") { store.del(CRASHED_KEY); loadModel(m); }
+    if (langChanged) return restartChat();
   }
+  applyTexts();
   wizard.hidden = true; $("chatUI").hidden = false;
   refreshEngine();
+}
+
+function restartChat() {
+  chatStarted = false;
+  chat.innerHTML = ""; $("chips").innerHTML = "";
+  history.length = 0; seen.clear();
+  Object.assign(lead, { role: null, exploring: false });
+  answers = 0; ctaShown = false; contactShown = false;
+  Object.assign(wz, { recruiting: null, role: null, other: "" });
+  applyTexts();
+  showWizard([3], "role");
 }
 
 function startChat() {
@@ -785,6 +809,7 @@ function startChat() {
   resolveChat();
   store.set("lang", LANG);
   buildContent(); applyTexts();
+  if (semState === "ready") embedProfile().catch(e => console.error(e)); // after a language change
   wizard.hidden = true; $("chatUI").hidden = false;
   botSay(F.welcome);
   if (wz.recruiting === "yes" && roleReady()) {
@@ -931,11 +956,10 @@ async function boot() {
   wz.model = !device.gpu ? "quick" : pref ?? RECOMMENDED;
   refreshEngine();
   if (wz.steps[wz.idx] === 1) renderWizard();
-  await checkCache();
-  if (wz.steps[wz.idx] === 1 && !wizard.hidden) renderWizard();
-  // Revisit: start the saved model if it is already downloaded (or the settings just changed it), unless it crashed here.
   const forced = session.take("loadNow");
-  if (onboarded && !crash && typeof pref === "number" && device.gpu && (forced || (device.cached[pref] && !store.get(CRASHED_KEY)))) loadModel(pref);
+  if (device.gpu) await deleteStoredModels();
+  // The settings were changed during a download: start the new model right away.
+  if (forced && typeof pref === "number" && device.gpu) loadModel(pref);
 }
 boot();
 </script>
