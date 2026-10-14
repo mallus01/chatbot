@@ -8,6 +8,9 @@ Webapp statique (aucun serveur) qui répond aux recruteurs sur ton profil, en an
 - `index.html` : l'interface et la logique (WebLLM chargé depuis le CDN jsDelivr, version 0.2.84 figée).
 - `knowledge.js` : ta base de connaissances en anglais, extraite du CV et des deux mémoires. C'est le fichier à modifier pour corriger ou ajouter une info.
 - `knowledge-fr.js` : la même base en français (mêmes `id`). Quand tu modifies une section dans `knowledge.js`, modifie aussi sa version française.
+- `retrieval.js` : la recherche dans le profil (mots-clés et sens), les réponses vérifiées et le garde-fou.
+- `semantic.js` : le petit modèle de recherche par le sens (multilingual-e5-small, ~120 Mo).
+- `tests/questions.js`, `tests/run.mjs`, `tests.html` : le jeu de tests (voir plus bas).
 
 ## Lancer en local
 Double-clique sur `index.html` (Chrome, Edge ou Safari récents). Si le navigateur bloque quelque chose, lance plutôt un petit serveur dans ce dossier :
@@ -31,6 +34,12 @@ Aux visites suivantes, seule l'étape 3 s'affiche ; le bouton « Modèle et lang
    - Lightest : Llama 3.2 1B (~0,7 Go), pour les petites machines
    À chaque question, l'app envoie au modèle le résumé du profil + les 3 sections les plus pertinentes, avec des consignes : répondre en anglais, ne rien inventer, renvoyer vers LinkedIn si l'info manque.
 3. Sans WebGPU, un message l'explique et les réponses rapides restent disponibles.
+
+## Précision des réponses
+- **Réponses vérifiées** (`faq` dans `knowledge.js` et `knowledge-fr.js`) : pour les questions fréquentes, la réponse est affichée mot pour mot, sans l'IA, avec la mention « Réponse vérifiée ». Chaque entrée a des formulations (`q`) et une réponse (`a`). Les boutons de suggestion tombent toujours sur ces réponses.
+- **Garde-fou** : si une réponse de l'IA cite un nombre, un nom, un e-mail ou un lien absent de ce qu'on lui a donné, elle est remplacée par l'extrait du profil.
+- **Recherche par le sens** : sur ordinateur, une fois le modèle d'IA prêt, un petit modèle (~120 Mo) compare le sens de la question aux sections et aux réponses vérifiées. Sans lui (téléphone, réponses rapides), la recherche par mots-clés est utilisée.
+- **Tests** : `node tests/run.mjs` mesure la recherche par mots-clés (lancé aussi automatiquement par GitHub à chaque modification). `tests.html` mesure aussi la recherche par le sens dans le navigateur et aide à régler le seuil `FAQ_SEM_MIN` de `retrieval.js`. Ajoute `?debug` à l'adresse du chatbot pour voir comment chaque réponse a été trouvée.
 
 ## Modifier le contenu
 Dans `knowledge.js`, chaque section a un `title`, des `keywords` (mots qui déclenchent la section) et un `text`. Garde chaque texte court (150 à 250 mots) : le modèle a une fenêtre de contexte de 4096 tokens.

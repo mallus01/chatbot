@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tests du chatbot</title>
+<style>
+  :root { --bg: #f6f7f9; --panel: #fff; --text: #1b1f24; --muted: #5d6673; --border: #e2e5ea; --accent: #2457d6; --ok: #1f8a4c; --bad: #c0392b; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #0f1216; --panel: #171b21; --text: #e7eaee; --muted: #9aa3ae; --border: #2a3039; --accent: #6d97ff; --ok: #4cc283; --bad: #ff7b6b; } }
+  :root[data-theme="dark"] { --bg: #0f1216; --panel: #171b21; --text: #e7eaee; --muted: #9aa3ae; --border: #2a3039; --accent: #6d97ff; --ok: #4cc283; --bad: #ff7b6b; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 16px; }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  p { color: var(--muted); margin: 0 0 12px; }
+  button { font: inherit; font-weight: 600; border: 0; border-radius: 8px; padding: 8px 14px; background: var(--accent); color: #fff; cursor: pointer; }
+  button:disabled { opacity: .5; }
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; margin: 12px 0; overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; }
+  th, td { text-align: left; padding: 4px 8px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  td.q { white-space: normal; min-width: 220px; }
+  .ok { color: var(--ok); } .bad { color: var(--bad); font-weight: 600; } .muted { color: var(--muted); }
+</style>
+<script src="knowledge.js"></script>
+<script src="knowledge-fr.js"></script>
+<script src="retrieval.js"></script>
+<script src="semantic.js"></script>
+<script src="tests/questions.js"></script>
+</head>
+<body>
+<div class="wrap">
+  <h1>Tests du chatbot</h1>
+  <p>Mesure la précision de la recherche sur les questions de <code>tests/questions.js</code>, par mots-clés puis par le sens. La recherche par le sens télécharge un modèle d'environ 120 Mo la première fois.</p>
+  <button id="run">Lancer les tests</button>
+  <div id="out"></div>
+</div>
+<script>
+const out = document.getElementById("out");
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const pct = (n, d) => d ? `${Math.round(100 * n / d)} %` : "–";
+const say = html => out.insertAdjacentHTML("beforeend", html);
+
+// What each threshold would give: validated answers shown rightly and wrongly.
+function calibration(calib) {
+  const rows = [0.86, 0.88, 0.9, 0.91, 0.92, 0.93, 0.94, 0.96].map(th => {
+    const shown = calib.filter(c => c.s >= th && c.gap >= Retrieval.FAQ_SEM_MARGIN);
+    const right = shown.filter(c => c.right).length, wrong = shown.length - right;
+    return `<tr><td>${th.toFixed(2)}${th === Retrieval.FAQ_SEM_MIN ? " (actuel)" : ""}</td><td class="ok">${right}</td><td class="${wrong ? "bad" : ""}">${wrong}</td></tr>`;
+  });
+  return `<div class="card"><h3>Seuil des réponses vérifiées par le sens</h3><p>Le bon seuil affiche le plus de bonnes réponses vérifiées avec 0 fausse.</p><table><tr><th>Seuil</th><th>Justes</th><th>Fausses</th></tr>${rows.join("")}</table></div>`;
+}
+
+document.getElementById("run").onclick = async e => {
+  e.target.disabled = true; out.innerHTML = "";
+  let semantic = true;
+  say(`<p id="status">Chargement du modèle de recherche par le sens…</p>`);
+  try { await Semantic.load(); } catch (err) { semantic = false; console.error(err); }
+  document.getElementById("status").textContent = semantic ? "Modèle chargé." : "Recherche par le sens indisponible : seuls les mots-clés sont testés.";
+  for (const lang of ["en", "fr"]) {
+    const idx = Retrieval.create(Retrieval.localize(PROFILE, PROFILE_FR, lang), lang);
+    const qs = TEST_QUESTIONS.filter(t => t.lang === lang);
+    let qv = [];
+    if (semantic) {
+      const jobs = idx.embeddingJobs();
+      const sv = await Semantic.embed(jobs.sections.map(x => x.text), "passage");
+      const fv = await Semantic.embed(jobs.faq.map(x => x.text), "query");
+      qv = await Semantic.embed(qs.map(t => t.q), "query");
+      idx.setVectors(sv, fv);
+    }
+    const modes = semantic ? [["Mots-clés", false], ["Par le sens", true]] : [["Mots-clés", false]];
+    const stats = modes.map(() => ({ shown: 0, top3: 0, faq: 0, wrong: 0 }));
+    const calib = [];
+    const rows = qs.map((t, n) => {
+      const cells = modes.map(([, sem], m) => {
+        const vec = sem ? qv[n] : null;
+        const f = idx.findFaq(t.q, vec), hits = idx.retrieve(t.q, 3, vec).map(d => d.id);
+        const faqOk = f && (f.item.id === t.faq || f.item.section === t.section);
+        const shown = f ? faqOk : hits[0] === t.section;
+        const st = stats[m];
+        if (shown) st.shown++;
+        if (hits.includes(t.section)) st.top3++;
+        if (f && faqOk) st.faq++;
+        if (f && !faqOk) st.wrong++;
+        const what = f ? `réponse vérifiée « ${f.item.id} » (${f.score.toFixed(3)})` : `section ${hits[0]}`;
+        return `<td class="${shown ? "ok" : "bad"}">${shown ? "✓" : "✗"} ${esc(what)}</td>`;
+      });
+      // Closest validated answers by meaning, to calibrate the acceptance threshold (FAQ_SEM_MIN in retrieval.js).
+      let near = "";
+      if (semantic) {
+        const [a, b] = idx.faqByMeaning(qv[n]);
+        calib.push({ id: a.item.id, s: a.score, gap: a.score - b.score, right: a.item.id === t.faq || a.item.section === t.section });
+        near = `<td class="muted">${esc(a.item.id)} ${a.score.toFixed(3)} · écart ${(a.score - b.score).toFixed(3)}</td>`;
+      }
+      return `<tr><td class="q">${esc(t.q)}</td><td class="muted">${esc(t.faq || t.section)}</td>${cells.join("")}${near}</tr>`;
+    });
+    say(`<div class="card"><h2>${lang === "fr" ? "Français" : "Anglais"} · ${qs.length} questions</h2><table>
+      <tr><th></th>${modes.map(([name]) => `<th>${name}</th>`).join("")}</tr>
+      <tr><td>Bonne réponse affichée sans l'IA</td>${stats.map(s => `<td>${pct(s.shown, qs.length)}</td>`).join("")}</tr>
+      <tr><td>Bonne section parmi les 3 données à l'IA</td>${stats.map(s => `<td>${pct(s.top3, qs.length)}</td>`).join("")}</tr>
+      <tr><td>Réponses vérifiées trouvées</td>${stats.map(s => `<td>${s.faq} / ${qs.filter(t => t.faq).length}</td>`).join("")}</tr>
+      <tr><td>Réponses vérifiées fausses</td>${stats.map(s => `<td class="${s.wrong ? "bad" : ""}">${s.wrong}</td>`).join("")}</tr>
+    </table></div>
+    ${semantic ? calibration(calib) : ""}
+    <div class="card"><table><tr><th>Question</th><th>Attendu</th>${modes.map(([name]) => `<th>${name}</th>`).join("")}${semantic ? "<th>Plus proche par le sens</th>" : ""}</tr>${rows.join("")}</table></div>`);
+  }
+  e.target.disabled = false;
+};
+</script>
+</body>
+</html>

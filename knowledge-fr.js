@@ -6,21 +6,21 @@ window.PROFILE_FR = {
   headline: "Chef de projet informatique junior (AMOA) · Ouvert aux postes de business analyst",
   location: "Toulouse, France · mobile partout en France et à l'étranger",
 
-  core: `Mattis Fernandez est chef de projet informatique junior, spécialisé en AMOA (assistance à maîtrise d'ouvrage : le rôle côté métier qui fait le lien entre les équipes métier et les équipes techniques, en recueillant les besoins, en rédigeant les spécifications, en pilotant les prestataires, en testant et validant les livraisons et en formant les utilisateurs). Il est titulaire d'un titre RNCP de niveau 7 (niveau master) d'Epitech Digital School, spécialisation Data & Fintech, obtenu en 2025 à l'issue de deux années en alternance. Expérience : Fayat IT (2024-2025, maintenance et évolution de la plateforme de sites web institutionnels du groupe Fayat, pilotage d'un prestataire, accompagnement des utilisateurs), AT Internet / Piano (2023-2024, consultant en web analytics au support client et à la formation), Laboratoires Pierre Fabre (stage en 2022, chef de projet digital). De novembre 2025 à octobre 2026, il a passé un an en Australie avec un visa vacances-travail (PVT), en travaillant chaque jour en anglais dans des équipes multiculturelles. Il cherche un CDI de chef de projet informatique et reste ouvert aux postes proches : business analyst, consultant AMOA ou fonctionnel, product owner ou projets orientés BI et data. Disponible immédiatement, mobile partout en France et à l'international (éligible au V.I.E.). Langues : français (langue maternelle), anglais (B2, immersion quotidienne en Australie). LinkedIn : https://www.linkedin.com/in/mattis-fernandez/`,
+  core: `Mattis Fernandez est chef de projet informatique junior, spécialisé en AMOA (assistance à maîtrise d'ouvrage : le rôle côté métier qui fait le lien entre les équipes métier et les équipes techniques, en recueillant les besoins, en rédigeant les spécifications, en pilotant les prestataires, en testant et validant les livraisons et en formant les utilisateurs). Il est titulaire du titre RNCP de niveau 7 (niveau master) « Expert en management des systèmes d'information », option Data & Fintech, d'Epitech Digital School, obtenu en 2025 à l'issue de deux années en alternance. Expérience : Fayat IT (2024-2025, maintenance et évolution de la plateforme de sites web institutionnels du groupe Fayat, pilotage d'un prestataire, accompagnement des utilisateurs), AT Internet / Piano (2023-2024, consultant en web analytics au support client et à la formation), Laboratoires Pierre Fabre (stage en 2022, chef de projet digital). De novembre 2025 à octobre 2026, il a passé un an en Australie avec un visa vacances-travail (PVT), en travaillant chaque jour en anglais dans des équipes multiculturelles. Il cherche un CDI de chef de projet informatique et reste ouvert aux postes proches : business analyst, consultant AMOA ou fonctionnel, product owner ou projets orientés BI et data. Disponible immédiatement, mobile partout en France et à l'international (éligible au V.I.E.). Langues : français (langue maternelle), anglais (B2, immersion quotidienne en Australie). LinkedIn : https://www.linkedin.com/in/mattis-fernandez/`,
 
   sections: [
     {
       id: "availability",
       ask: "Quand peut-il commencer, et où ?",
       title: "Disponibilité, lieu et contrat",
-      keywords: ["disponible", "disponibilite", "commencer", "debut", "demarrer", "quand", "preavis", "lieu", "localisation", "base", "demenager", "mobilite", "mobile", "teletravail", "distanciel", "presentiel", "hybride", "site", "bureau", "etranger", "international", "contrat", "cdi", "permis", "conduire", "voyager", "pays", "ville", "secteur", "domaine", "banque", "bancaire", "salaire", "remuneration", "pretention", "pretentions"],
+      keywords: ["disponible", "disponibilite", "commencer", "debut", "demarrer", "quand", "preavis", "lieu", "localisation", "base", "demenager", "mobilite", "mobile", "teletravail", "distanciel", "presentiel", "hybride", "bureau", "etranger", "international", "contrat", "cdi", "permis", "conduire", "voyager", "pays", "ville", "secteur", "domaine", "banque", "bancaire", "salaire", "remuneration", "pretention", "pretentions"],
       text: `Disponibilité : Mattis est disponible immédiatement. Contrat : il recherche un CDI. Lieu : il est basé à Toulouse. Mobilité : il est ouvert à tout poste en France et à l'international ; il est éligible au V.I.E. (volontariat international en entreprise, pour les jeunes diplômés qui travaillent à l'étranger pour des entreprises françaises). Il vient de passer un an en Australie (principalement à Broome, en Australie-Occidentale), ce qui montre qu'il sait déménager et s'adapter vite. Mode de travail : il préfère travailler sur site ; un rythme hybride avec un jour de télétravail en milieu de semaine lui convient aussi très bien. Secteur : pas de préférence stricte, il est ouvert à tous les secteurs, avec un attrait particulier pour la banque et la finance (fintech). Salaire : cela dépend de la localisation, et Mattis préfère en discuter directement avec le recruteur. Il a les permis B (voiture) et A2 (moto).`
     },
     {
       id: "fayat",
       ask: "Qu'a-t-il fait chez Fayat IT ?",
       title: "Fayat IT – Consultant web / chef de projet AMOA (alternance, 2024-2025, Bordeaux)",
-      keywords: ["fayat", "tma", "tme", "maintenance", "evolution", "cms", "ibexa", "usine", "site", "sites", "agence", "prestataire", "sous-traitant", "fournisseur", "specification", "specifications", "cahier", "charges", "besoins", "jira", "kanban", "recette", "test", "tests", "validation", "filiales", "parties", "prenantes", "construction", "btp", "projet", "gestion", "pilotage", "coordination", "amoa"],
+      keywords: ["fayat", "tma", "tme", "maintenance", "evolution", "cms", "ibexa", "usine", "site", "sites", "agence", "prestataire", "sous-traitant", "fournisseur", "specification", "specifications", "cahier", "charges", "besoins", "kanban", "recette", "test", "tests", "validation", "filiales", "parties", "prenantes", "construction", "btp", "projet", "gestion", "pilotage", "coordination", "amoa", "pilote", "piloter", "externe", "externes"],
       text: `Fayat IT est la direction des systèmes d'information du groupe Fayat, premier groupe indépendant de construction en France (plus de 5 milliards d'euros de chiffre d'affaires, plus de 22 000 collaborateurs, 170 pays ; Fayat IT accompagne plus de 16 000 utilisateurs). Mattis travaillait dans l'équipe chargée de la TMA/TME (tierce maintenance applicative et évolutive) de « l'Usine à Site », un CMS centralisé (Ibexa) qui permet aux filiales du groupe de créer et gérer leurs propres sites institutionnels (environ 80 sites sur la plateforme). Son rôle : recueillir, analyser et catégoriser les demandes des filiales (corrections de bugs, évolutions, assistance) ; les prioriser ; rédiger les spécifications fonctionnelles et techniques pour l'agence web Clever Age ; planifier et suivre le travail de l'agence dans Jira (Kanban) ; tester et valider les livrables avant la mise en production ; communiquer les mises en production aux filiales. Il a mené une enquête de recueil des besoins auprès des filiales pour construire la feuille de route du CMS, géré les désaccords entre parties prenantes en trouvant des compromis et contribué à structurer le processus de validation. Sa rigueur dans le contrôle du travail du prestataire a souvent été soulignée.`
     },
     {
@@ -41,7 +41,7 @@ window.PROFILE_FR = {
       id: "atinternet-training",
       ask: "A-t-il formé des utilisateurs ou des clients ?",
       title: "AT Internet / Piano – Formation des clients et amélioration continue",
-      keywords: ["formation", "former", "forme", "demo", "demonstration", "accueil", "onboarding", "enseigner", "formateur", "presentation", "faq", "guide", "guides", "video", "tutoriels", "documentation", "amelioration", "continue", "processus", "ia", "reclamation", "insatisfaction"],
+      keywords: ["formation", "former", "forme", "demo", "demonstration", "accueil", "onboarding", "enseigner", "formateur", "presentation", "faq", "guide", "guides", "video", "tutoriels", "documentation", "amelioration", "continue", "processus", "ia", "reclamation", "insatisfaction", "session", "sessions", "animer", "anime"],
       text: `Chez AT Internet / Piano, Mattis animait la « Welcome Demo », la session de prise en main des nouveaux clients : environ 30 minutes pour présenter les fonctionnalités essentielles de Piano Analytics, une démonstration en direct des outils et de la personnalisation, puis des questions-réponses, en adaptant le contenu grâce à l'écoute active. Il a contribué à l'amélioration continue du support : repérer les demandes récurrentes pour créer des guides utilisateurs et des FAQ, mettre à jour la documentation technique, écrire, tourner et monter des tutoriels vidéo pour la documentation publique de Piano Analytics (analytics-docs.piano.io), proposer des améliorations du produit à partir des retours clients, optimiser les processus internes pour réduire le temps de résolution des tickets, et mettre en place une procédure de détection des réclamations par IA pour orienter les clients mécontents vers des consultants seniors ou des managers. Les clients ont fait des retours positifs sur la clarté de ses explications et de ses supports.`
     },
     {
@@ -55,14 +55,14 @@ window.PROFILE_FR = {
       id: "pierre-fabre",
       ask: "Qu'a-t-il fait chez Pierre Fabre ?",
       title: "Laboratoires Pierre Fabre – Chef de projet digital (stage, février-août 2022, Castres/Toulouse)",
-      keywords: ["pierre", "fabre", "pharma", "pharmaceutique", "laboratoire", "laboratoires", "stage", "stagiaire", "drupal", "wordpress", "contenu", "contenus", "communication", "interne", "externe", "benchmark", "concurrence", "concurrentielle", "veille", "marketing", "digital"],
+      keywords: ["pierre", "fabre", "pharma", "pharmaceutique", "laboratoire", "laboratoires", "stage", "stagiaire", "drupal", "wordpress", "contenu", "contenus", "communication", "benchmark", "concurrence", "concurrentielle", "veille", "marketing", "digital"],
       text: `De février à août 2022, Mattis était chef de projet digital en stage aux Laboratoires Pierre Fabre (grand groupe pharmaceutique et dermo-cosmétique français), à Castres et Toulouse. Il gérait les contenus sur des CMS (Drupal et WordPress), s'occupait de la communication digitale interne et externe, et réalisait des benchmarks et des analyses concurrentielles.`
     },
     {
       id: "australia",
       ask: "Qu'a-t-il fait en Australie ?",
       title: "Année de PVT en Australie (novembre 2025 - octobre 2026)",
-      keywords: ["australie", "broome", "pvt", "vacances", "travail", "emplois", "jobs", "mine", "minier", "taxi", "construction", "chantier", "restauration", "annee", "sabbatique", "trou", "etranger", "anglais", "multiculturel", "international", "adaptabilite", "resilience", "voyage"],
+      keywords: ["australie", "broome", "pvt", "vacances", "travail", "emplois", "jobs", "mine", "minier", "taxi", "construction", "chantier", "restauration", "annee", "sabbatique", "trou", "etranger", "multiculturel", "international", "adaptabilite", "resilience", "voyage", "cv"],
       text: `Après son diplôme, Mattis a passé de novembre 2025 à octobre 2026 en Australie avec un visa vacances-travail (PVT), principalement à Broome (Australie-Occidentale). Il y a occupé des emplois hors informatique pour financer l'expérience : livraison de repas, chauffeur de taxi, serveur en boîte de nuit, ouvrier sur des chantiers, préparateur de commandes, et « utility » sur un site minier, où il alternait jardinage, entretien des locaux, service au bar et plonge en cuisine. Il est vite devenu opérationnel dans de nombreux postes nouveaux pour lui, au sein d'équipes multiculturelles, en se montrant autonome, fiable et travailleur, y compris dans des environnements exigeants comme le BTP et la mine, avec des règles de sécurité strictes. Il parlait anglais chaque jour au travail et a connu différents styles de management et de travail. Pour la gestion de projet, cela lui apporte adaptabilité, résilience, une forte éthique de travail, de l'aisance avec des personnes de tous horizons et la prise de décision en contexte incertain. Cela explique aussi la période après ses études : une expérience internationale choisie, pas une période d'inactivité.`
     },
     {
@@ -76,8 +76,8 @@ window.PROFILE_FR = {
       id: "education",
       ask: "Quel est son diplôme ?",
       title: "Formation",
-      keywords: ["formation", "diplome", "diplomes", "master", "ecole", "universite", "etudes", "epitech", "digital", "campus", "bachelor", "licence", "rncp", "niveau", "fintech", "data", "donnees", "bootcamp", "bac", "baccalaureat", "alternance", "apprentissage", "cursus"],
-      text: `Formation : Epitech Digital School, titre RNCP de niveau 7 (niveau master), spécialisation Data & Fintech (2020-2022 puis 2023-2025, les deux dernières années en alternance entre l'école et l'entreprise). Son mémoire d'alternance a été évalué au regard du titre RNCP 7 « Expert en management des systèmes d'information » (analyse des besoins métier, conception fonctionnelle et technique, gestion de projets SI, validation et déploiement, promotion de solutions de transformation digitale). Pédagogie par projets ; analyse de données (clustering, régression linéaire, tableaux croisés dynamiques) avec Python et Excel ; conception d'une application bancaire pour aider les utilisateurs à gérer leurs finances personnelles. Digital Campus, Bachelor « Chef de projet digital », spécialisation web marketing (2022-2023) : méthode Agile/Scrum et projets transverses. Bootcamp technique Epitech Technology (2019-2020). Baccalauréat STI2D, option systèmes d'information et numérique (2019).`
+      keywords: ["formation", "diplome", "diplomes", "master", "ecole", "universite", "etudes", "epitech", "digital", "campus", "bachelor", "licence", "rncp", "expert", "systeme", "systemes", "information", "niveau", "fintech", "data", "donnees", "bootcamp", "bac", "baccalaureat", "alternance", "apprentissage", "cursus"],
+      text: `Formation : Epitech Digital School, titre RNCP de niveau 7 (niveau master) « Expert en management des systèmes d'information », option Data & Fintech (2020-2022 puis 2023-2025, les deux dernières années en alternance entre l'école et l'entreprise). Le titre couvre l'analyse des besoins métier, la conception fonctionnelle et technique, la gestion de projets SI, la validation et le déploiement, et la promotion de solutions de transformation digitale. Pédagogie par projets ; analyse de données (clustering, régression linéaire, tableaux croisés dynamiques) avec Python et Excel ; conception d'une application bancaire pour aider les utilisateurs à gérer leurs finances personnelles. Digital Campus, Bachelor « Chef de projet digital », spécialisation web marketing (2022-2023) : méthode Agile/Scrum et projets transverses. Bootcamp technique Epitech Technology (2019-2020). Baccalauréat STI2D, option systèmes d'information et numérique (2019).`
     },
     {
       id: "skills",
@@ -97,7 +97,7 @@ window.PROFILE_FR = {
       id: "strengths",
       ask: "Pourquoi le recruter ?",
       title: "Points forts et savoir-être (avec les retours reçus)",
-      keywords: ["force", "forces", "atout", "atouts", "qualite", "qualites", "savoir-etre", "soft", "personnalite", "decrire", "collegues", "retours", "equipe", "rigueur", "rigoureux", "apprendre", "apprentissage", "rapide", "pression", "stress", "ponctuel", "fiable", "ethique", "pourquoi", "recruter", "embaucher", "meilleur", "valeur"],
+      keywords: ["force", "forces", "atout", "atouts", "qualite", "qualites", "savoir-etre", "soft", "personnalite", "decrire", "collegues", "retours", "equipe", "rigueur", "rigoureux", "apprendre", "apprentissage", "rapide", "pression", "stress", "ponctuel", "fiable", "ethique", "recruter", "embaucher", "meilleur", "valeur"],
       text: `Points forts confirmés par ses collègues et ses responsables pendant ses années d'alternance : il apprend vite (rapidement opérationnel sur Piano Analytics et sur le CMS de Fayat, on ne lui a jamais reproché d'être lent à monter en compétence) ; rigueur d'analyse et souci du détail (il structurait les demandes des filiales pour l'agence, repérait vite les incohérences dans les livrables, et a été félicité pour son contrôle du travail du prestataire) ; calme et méthodique sous pression (problèmes clients critiques, pics de demandes, projet de formation mené en parallèle) ; ponctuel, fiable et professionnel ; état d'esprit positif (un collègue lui a dit : « Tu as toujours le sourire et la bonne humeur, c'est super d'avoir quelqu'un comme toi dans l'équipe ») ; il tient compte des retours et reproduit rarement une erreur. Qualités citées sur son CV : rigueur, esprit collaboratif, résilience, prise de recul, éthique. Pourquoi le recruter : il allie crédibilité technique (Python, SQL, Docker, débogage) et compétences tournées vers le métier (analyse des besoins, spécifications, pilotage de prestataires, formation), ce qui fait de lui un bon traducteur entre le métier et la technique.`
     },
     {
@@ -127,6 +127,122 @@ window.PROFILE_FR = {
       title: "Contact et prochaines étapes",
       keywords: ["contact", "contacter", "joindre", "email", "mail", "courriel", "telephone", "appeler", "entretien", "linkedin", "cv", "rencontrer", "rendez-vous", "remuneration", "references"],
       text: `Le meilleur moyen de contacter Mattis est LinkedIn : https://www.linkedin.com/in/mattis-fernandez/ . On peut aussi le joindre par e-mail à mattis.fernandez31@gmail.com. Il est disponible immédiatement pour des entretiens. Les sujets comme les prétentions salariales (qui dépendent de la localisation), les références ou la date exacte de début sont à aborder directement avec lui.`
+    }
+  ],
+
+  // Réponses validées : affichées mot pour mot, sans l'IA, quand une question correspond à l'une des `q`.
+  faq: [
+    {
+      id: "pitch",
+      q: ["Présentez-moi Mattis en 30 secondes.", "Qui est Mattis ?", "Résumez son profil.", "Parlez-moi de Mattis.", "Pouvez-vous le présenter ?", "Quel est son parcours ?"],
+      a: `Mattis est **chef de projet informatique** junior (AMOA), titulaire d'un diplôme de niveau master en Data & Fintech. Pendant deux ans d'alternance, il a piloté la maintenance et l'évolution de la plateforme de sites web du groupe Fayat (environ 80 sites) avec une agence externe, et avant cela il assurait le support et la formation des clients chez AT Internet / Piano, leader de la mesure d'audience web. Il a ensuite passé un an à travailler en anglais en Australie. Il est **disponible immédiatement** et mobile.`
+    },
+    {
+      id: "strengths",
+      q: ["Pourquoi le recruter ?", "Quels sont ses points forts ?", "Qu'est-ce qui fait de lui un bon candidat ?", "Quelles sont ses qualités ?", "Comment ses collègues le décrivent-ils ?"],
+      a: `Trois raisons :
+- **Il fait le lien entre le métier et la technique** : il recueille les besoins et rédige les spécifications, avec assez de bagage technique (Python, SQL, Docker, débogage) pour être crédible auprès des développeurs.
+- **Il est rigoureux** : chez Fayat IT, il a souvent été félicité pour son contrôle des livrables de l'agence externe et pour repérer les incohérences.
+- **Il apprend vite et prend des initiatives** : vite opérationnel chez Piano et chez Fayat, il a lancé seul un projet d'e-learning.
+Ses collègues soulignent aussi son calme sous pression et sa bonne humeur.`
+    },
+    {
+      id: "fayat",
+      q: ["Qu'a-t-il fait chez Fayat IT ?", "Parlez-moi de son expérience chez Fayat.", "Quel était son rôle chez Fayat ?", "A-t-il déjà géré un projet informatique ?", "A-t-il piloté des prestataires ou des agences ?"],
+      a: `Chez **Fayat IT** (la DSI du premier groupe indépendant de construction en France), Mattis travaillait sur la maintenance et l'évolution de « l'Usine à Site », un CMS qui héberge environ **80 sites** des filiales. Il recueillait et priorisait les demandes des filiales, rédigeait les spécifications fonctionnelles et techniques pour l'agence externe Clever Age, suivait son travail dans Jira (Kanban), testait et validait les livraisons avant la mise en production, puis communiquait les nouveautés. Il a aussi mené une enquête de besoins pour construire la feuille de route du CMS.`
+    },
+    {
+      id: "fayat-training",
+      q: ["Parlez-moi de la plateforme de formation qu'il a proposée.", "A-t-il lancé un projet de sa propre initiative ?", "C'était quoi le projet d'e-learning ?", "Parlez-moi du projet de LMS."],
+      a: `De sa propre initiative chez Fayat IT, Mattis a proposé une **plateforme d'e-learning** pour enseigner les bases du CMS aux contributeurs, afin que les formations en présentiel se concentrent sur des besoins précis. Il a audité les canaux existants, comparé les solutions d'e-learning du marché, défini les contenus et recommandé une solution dans un dossier pour la direction. Son contrat d'alternance s'est terminé avant la décision, mais il a mené seul le projet de l'idée jusqu'à une recommandation documentée.`
+    },
+    {
+      id: "atinternet",
+      q: ["Qu'a-t-il fait chez AT Internet / Piano ?", "Qu'a-t-il fait chez Piano ?", "Parlez-moi de son expérience au support.", "Quel était son rôle chez AT Internet ?"],
+      a: `Chez **AT Internet / Piano**, leader français de la mesure d'audience web, Mattis était consultant en web analytics au support technique. Il traitait les tickets clients dans Zendesk (implémentation du marquage, conflits avec la gestion du consentement, bugs de tableaux de bord), analysait les logs et les configurations, reproduisait les bugs et les remontait clairement aux développeurs et aux Product Owners dans Jira, puis accompagnait les clients jusqu'à la correction. Il y a appris à gérer de nombreux tickets en parallèle et à expliquer simplement des sujets techniques.`
+    },
+    {
+      id: "atinternet-training",
+      q: ["A-t-il formé des utilisateurs ou des clients ?", "A-t-il de l'expérience en formation ?", "Sait-il animer des présentations ou des démos ?"],
+      a: `Oui. Chez AT Internet / Piano, Mattis animait la **« Welcome Demo »**, la session de prise en main des nouveaux clients (environ 30 minutes : fonctionnalités clés, démonstration en direct, questions-réponses). Il a aussi rédigé des guides et des FAQ, et écrit, tourné et monté des tutoriels vidéo pour la documentation publique de Piano Analytics. Les clients ont salué la clarté de ses explications. Chez Fayat IT, il a proposé une plateforme d'e-learning pour les contributeurs des sites du groupe.`
+    },
+    {
+      id: "why-pm",
+      q: ["Pourquoi la gestion de projet ?", "Pourquoi veut-il devenir chef de projet ?", "Qu'est-ce qui le motive ?", "Pourquoi a-t-il quitté le support ?"],
+      a: `Au support chez AT Internet, Mattis aimait résoudre des problèmes mais ne faisait qu'effleurer les projets des autres. Selon ses mots, il se sentait comme « un réparateur de bateaux qui aide des explorateurs à réparer leurs navires, alors qu'il ne rêvait que de les suivre ». Il a rejoint Fayat IT pour mener des projets sur la durée, ce qui lui a confirmé qu'il veut structurer et piloter des évolutions informatiques de bout en bout, en faisant le pont entre le métier et la technique.`
+    },
+    {
+      id: "pierre-fabre",
+      q: ["Qu'a-t-il fait chez Pierre Fabre ?", "Parlez-moi de son stage.", "Quelle a été sa première expérience ?"],
+      a: `De février à août 2022, Mattis était **chef de projet digital en stage** aux Laboratoires Pierre Fabre, grand groupe pharmaceutique et dermo-cosmétique français. Il gérait les contenus sur Drupal et WordPress, s'occupait de la communication digitale interne et externe, et réalisait des benchmarks et des analyses concurrentielles.`
+    },
+    {
+      id: "australia",
+      q: ["Qu'a-t-il fait en Australie ?", "Pourquoi y a-t-il un trou après ses études ?", "Qu'a-t-il fait depuis son diplôme ?", "Qu'a-t-il fait pendant son PVT ?"],
+      a: `Après son diplôme, Mattis a passé de novembre 2025 à octobre 2026 en **Australie** avec un PVT, principalement à Broome. Il a occupé des emplois hors informatique pour financer l'expérience (livraison de repas, chauffeur de taxi, serveur, chantiers, préparation de commandes, « utility » sur un site minier), en travaillant chaque jour en anglais dans des équipes multiculturelles. C'était une expérience internationale choisie, qui lui a apporté adaptabilité, résilience et une forte éthique de travail.`
+    },
+    {
+      id: "languages",
+      q: ["Quel est son niveau d'anglais ?", "Quelles langues parle-t-il ?", "Parle-t-il anglais ?", "Peut-il travailler en anglais ?"],
+      a: `Le français est sa langue maternelle et son anglais est de niveau **B2**, très pratiqué : il a passé un an à travailler en Australie dans des équipes multiculturelles, en parlant anglais chaque jour. Chez AT Internet / Piano, il a aussi rédigé de la documentation et des tutoriels en anglais pour la documentation publique de Piano Analytics.`
+    },
+    {
+      id: "education",
+      q: ["Quel est son diplôme ?", "Qu'a-t-il étudié ?", "Dans quelle école était-il ?", "Quelle est sa formation ?"],
+      a: `Mattis est titulaire du **titre RNCP de niveau 7 « Expert en management des systèmes d'information »** (niveau master), option **Data & Fintech**, d'Epitech Digital School (2025), les deux dernières années en alternance. Auparavant : un Bachelor « Chef de projet digital » à Digital Campus (Agile/Scrum, projets transverses), un bootcamp Epitech Technology et un baccalauréat STI2D option systèmes d'information et numérique.`
+    },
+    {
+      id: "skills",
+      q: ["Quelles sont ses compétences techniques ?", "Quels outils utilise-t-il ?", "Connaît-il l'agilité ou Scrum ?", "Sait-il coder ?", "Quelle est sa stack technique ?"],
+      a: `- **Gestion de projet** : AMOA, Agile/Scrum, Kanban, Jira, Confluence, spécifications, pilotage de prestataires, recette et validation.
+- **Technique** : Python, SQL, C, JavaScript, HTML, CSS, Docker, Git, Linux.
+- **Données et outils** : Power BI, Piano Analytics, Excel (tableaux croisés dynamiques), CMS (Ibexa, Drupal, WordPress), SEO, UI/UX.
+Il connaît aussi les bases de la conformité RGPD et ePrivacy.`
+    },
+    {
+      id: "certifications",
+      q: ["A-t-il des certifications ?", "Est-il certifié PMP ou PSM ?", "A-t-il une certification Scrum ?", "Est-il certifié ?"],
+      a: `Pas pour le moment : Mattis n'a pas de certification formelle en gestion de projet comme PSM, PMP ou PRINCE2. Ses méthodes viennent de ses formations et de la pratique (Agile/Scrum, Kanban, Jira). Il est **ouvert à passer des certifications** si le poste le demande.`
+    },
+    {
+      id: "business-analyst",
+      q: ["Correspond-il à un poste de business analyst ?", "Pourrait-il être business analyst ?", "Est-il ouvert à d'autres postes ?", "Accepterait-il un poste de product owner ?"],
+      a: `Oui. Au-delà des postes de chef de projet informatique, Mattis correspond aux postes de **business analyst**, consultant AMOA ou fonctionnel, product owner et projets data/BI. Chez Fayat IT, il recueillait et formalisait les besoins métier, rédigeait les spécifications et validait les livraisons ; chez AT Internet, il analysait les problèmes des clients et rédigeait des rapports de bugs précis ; et son diplôme est en Data & Fintech. À plus long terme, il vise des postes managériaux, idéalement sur des projets fintech.`
+    },
+    {
+      id: "availability",
+      q: ["Quand peut-il commencer, et où ?", "Quand est-il disponible ?", "Est-il prêt à déménager ?", "Où est-il basé ?", "Quel type de contrat cherche-t-il ?"],
+      a: `Mattis est **disponible immédiatement** et recherche un CDI. Il est basé à Toulouse, ouvert à tout poste en France et à l'étranger, et éligible au V.I.E. Son année en Australie montre qu'il sait déménager et s'adapter vite.`
+    },
+    {
+      id: "remote",
+      q: ["Veut-il faire du télétravail ?", "Est-il ouvert au travail hybride ?", "Préfère-t-il le télétravail ou le présentiel ?", "Combien de jours de télétravail souhaite-t-il ?"],
+      a: `Mattis préfère travailler **sur site**. Un rythme hybride avec **un jour de télétravail en milieu de semaine** lui convient aussi très bien.`
+    },
+    {
+      id: "sector",
+      q: ["Dans quel secteur veut-il travailler ?", "A-t-il une préférence de secteur ?", "Le secteur bancaire l'intéresse-t-il ?"],
+      a: `Il n'a pas de préférence stricte et reste ouvert à tous les secteurs, avec un **attrait particulier pour la banque et la finance (fintech)**, le domaine de son diplôme et de son mémoire.`
+    },
+    {
+      id: "salary",
+      q: ["Quelles sont ses prétentions salariales ?", "Combien veut-il gagner ?", "Quel salaire recherche-t-il ?"],
+      a: `Cela dépend de la localisation, et Mattis préfère en discuter **directement avec vous**. Cliquez sur « Obtenir ses coordonnées » pour le joindre.`
+    },
+    {
+      id: "growth",
+      q: ["Sur quoi travaille-t-il pour s'améliorer ?", "Quels sont ses défauts ?", "Quels sont ses axes d'amélioration ?"],
+      a: `Mattis a identifié lui-même trois axes et travaille sur chacun : la **priorisation** (il veut parfois tout traiter à la fois, il pratique donc des méthodes de priorisation), le **suivi des réunions denses** (notes structurées, compte rendu des décisions et des actions après chaque réunion, suivi dans Jira et Confluence) et la **prise de parole en grand groupe** (il va vers les autres tôt ; son année dans des équipes variées en Australie l'a beaucoup aidé).`
+    },
+    {
+      id: "thesis-fintech",
+      q: ["Quel était le sujet de son mémoire ?", "Parlez-moi de ses recherches.", "Connaît-il la fintech ?"],
+      a: `Son mémoire de diplôme posait la question : « Comment la fintech peut-elle réduire notre dépendance aux institutions financières de l'État ? » Il a étudié la relation des artisans avec les banques, les prêts en DeFi, les néobanques et le microcrédit des ONG, puis spécifié une plateforme web et mobile (React) avec des prêts adossés à des garanties, des « prêts solidaires » qui financent des artisans locaux et des réserves de microcrédit, automatisés par des smart contracts. Cela montre qu'il sait étudier un domaine complexe et le traduire en spécifications produit.`
+    },
+    {
+      id: "interests",
+      q: ["Que fait-il en dehors du travail ?", "Quels sont ses loisirs ?", "Quels sont ses centres d'intérêt ?"],
+      a: `En dehors du travail, Mattis aime la photographie, les sports collectifs (football, rugby, handball), la musculation, les voitures et les motos, et il suit de près l'actualité technologique, y compris la fintech.`
     }
   ],
 
