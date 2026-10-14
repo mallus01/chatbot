@@ -24,7 +24,7 @@ window.PROFILE = {
       id: "fayat",
       ask: "What did he do at Fayat IT?",
       title: "Fayat IT – Web consultant / AMOA project manager (work-study, 2024-2025, Bordeaux)",
-      keywords: ["fayat", "tma", "tme", "maintenance", "cms", "ibexa", "website", "usine", "site", "factory", "clever", "age", "agency", "vendor", "supplier", "subcontractor", "specification", "specifications", "requirements", "jira", "kanban", "testing", "validation", "acceptance", "uat", "stakeholder", "stakeholders", "subsidiaries", "construction", "project", "management", "coordination", "amoa"],
+      keywords: ["fayat", "tma", "tme", "maintenance", "cms", "ibexa", "website", "usine", "site", "factory", "clever", "age", "agency", "vendor", "supplier", "subcontractor", "specification", "specifications", "requirements", "kanban", "testing", "validation", "acceptance", "uat", "stakeholder", "stakeholders", "subsidiaries", "construction", "project", "management", "coordination", "amoa"],
       text: `Fayat IT is the IT department of the Fayat Group, France's largest independent construction group (over 5 billion euros revenue, 22,000+ employees, 170 countries; Fayat IT supports 16,000+ users). Mattis worked in the team running the TMA/TME (third-party application maintenance and evolution) of the "Usine à Site", a centralised CMS (Ibexa) that lets the group's subsidiaries build and manage their own corporate websites (around 80 websites on the platform). His role: collect, analyse and categorise subsidiaries' requests (bug fixes, evolutions, user support); prioritise them; write functional and technical specifications for the external web agency Clever Age; plan and track the agency's work in Jira (Kanban); test and validate deliverables before production; communicate releases to subsidiaries. He ran a needs-gathering survey with subsidiaries to build the CMS roadmap, managed disagreements between stakeholders by finding compromises, and helped make the validation process more structured. His rigour in checking the vendor's work was regularly highlighted.`
     },
     {
@@ -45,7 +45,7 @@ window.PROFILE = {
       id: "atinternet-training",
       ask: "Has he trained users or clients?",
       title: "AT Internet / Piano – Client training and continuous improvement",
-      keywords: ["training", "demo", "welcome", "onboarding", "teach", "trainer", "presentation", "faq", "guide", "guides", "video", "tutorials", "documentation", "continuous", "improvement", "process", "ai", "complaint"],
+      keywords: ["training", "demo", "welcome", "onboarding", "teach", "trainer", "presentation", "faq", "guide", "guides", "video", "tutorials", "documentation", "continuous", "improvement", "process", "ai", "complaint", "session", "sessions", "client", "clients"],
       text: `At AT Internet / Piano, Mattis delivered the "Welcome Demo" onboarding session for new clients: about 30-minute sessions presenting the essential features of Piano Analytics, a live demo of tools and customisation, and Q&A, adapting the content through active listening. He contributed to continuous improvement of support: identifying recurring requests to create user guides and FAQs, updating technical documentation, writing, filming and editing video tutorials for the public Piano Analytics documentation (analytics-docs.piano.io), suggesting product improvements based on client feedback, optimising internal processes to reduce ticket resolution time, and a procedure using AI-based complaint detection to route unhappy clients to senior consultants or managers. Client feedback on the clarity of his explanations and materials was positive.`
     },
     {
@@ -66,7 +66,7 @@ window.PROFILE = {
       id: "australia",
       ask: "What did he do in Australia?",
       title: "Working Holiday in Australia (Nov 2025 - Oct 2026)",
-      keywords: ["australia", "broome", "working", "holiday", "jobs", "mine", "mining", "taxi", "construction", "hospitality", "whv", "pvt", "gap", "year", "abroad", "english", "multicultural", "international", "adaptability", "resilience", "travel"],
+      keywords: ["australia", "broome", "working", "holiday", "jobs", "mine", "mining", "taxi", "construction", "hospitality", "whv", "pvt", "gap", "year", "abroad", "multicultural", "international", "adaptability", "resilience", "travel", "cv"],
       text: `After graduating, Mattis spent November 2025 to October 2026 in Australia on a Working Holiday Visa, mainly in Broome (Western Australia). The jobs were non-IT jobs taken to fund the experience: meal delivery, taxi driver, nightclub waiter, construction worker, order picker, and "utility" worker at a mine site, where he rotated between gardening, cleaning, bartending and kitchen hand duties. He got up to speed quickly in many roles that were new to him, in multicultural teams, proving autonomous, reliable and hard-working, including in demanding environments like construction and mining with strict safety rules. He used English every day at work and experienced different management and working styles. For project management this brings adaptability, resilience, a strong work ethic, ease with people from all backgrounds and decision-making in uncertain contexts. It also explains the gap after his studies: a deliberate international experience, not inactivity.`
     },
     {
@@ -101,7 +101,7 @@ window.PROFILE = {
       id: "strengths",
       ask: "Why should we hire him?",
       title: "Strengths and soft skills (with feedback received)",
-      keywords: ["strength", "strengths", "quality", "qualities", "soft", "personality", "describe", "colleagues", "feedback", "team", "teamwork", "rigour", "rigorous", "learn", "learner", "fast", "pressure", "stress", "punctual", "reliable", "ethics", "why", "hire", "should", "best", "value"],
+      keywords: ["strength", "strengths", "quality", "qualities", "soft", "personality", "describe", "colleagues", "feedback", "team", "teamwork", "rigour", "rigorous", "learn", "learner", "fast", "pressure", "stress", "punctual", "reliable", "ethics", "hire", "should", "best", "value"],
       text: `Strengths confirmed by colleagues and managers during his work-study years: fast learner (quickly operational on Piano Analytics and on the Fayat CMS, never told he was slow to ramp up); analytical rigour and attention to detail (structured subsidiaries' requests for the agency, quickly spotted inconsistencies in deliverables, praised for checking the vendor's work); calm and methodical under pressure (critical client issues, peaks of requests, running the training project in parallel); punctual, reliable and professional; positive attitude (a colleague told him: "You're always smiling and in a good mood, it's great to have someone like you on the team"); learns from feedback and rarely repeats a mistake. CV qualities: rigour, collaborative spirit, resilience, ability to step back, ethics. Why hire him: he combines technical credibility (Python, SQL, Docker, debugging) with business-facing skills (needs analysis, specs, vendor steering, training), so he translates well between business and tech.`
     },
     {
@@ -131,6 +131,124 @@ window.PROFILE = {
       title: "Contact and next steps",
       keywords: ["contact", "reach", "email", "phone", "call", "interview", "linkedin", "cv", "resume", "meet", "meeting", "compensation", "expectations", "references"],
       text: `The best way to contact Mattis is through LinkedIn: https://www.linkedin.com/in/mattis-fernandez/ . He can also be reached by email at mattis.fernandez31@gmail.com. He is available immediately for interviews. Topics such as salary expectations (which depend on the location), references or exact start date are best discussed with him directly.`
+    }
+  ],
+
+  // Validated answers: shown word for word, without the AI, when a question matches one of `q`.
+  // An entry whose id is a section id also answers that section's `ask` question (the suggestion buttons).
+  // `section` says which part of the profile the answer comes from.
+  faq: [
+    {
+      id: "pitch", section: "strengths",
+      q: ["Give me a 30-second pitch of Mattis.", "Who is Mattis?", "Summarize his profile.", "Tell me about Mattis.", "Can you introduce him?", "What is his background?"],
+      a: `Mattis is a junior **IT project manager** (business-side / AMOA) with a master's-level degree in Data & Fintech. During two years of work-study he steered the maintenance and evolution of the Fayat group's website platform (around 80 sites) with an external agency, and before that handled client support and training at AT Internet / Piano, a web analytics leader. He then spent a year working in English in Australia. He is **available immediately** and open to relocation.`
+    },
+    {
+      id: "strengths", section: "strengths",
+      q: ["Why should we hire him?", "What are his strengths?", "What makes him a good candidate?", "What are his main qualities?", "How would his colleagues describe him?"],
+      a: `Three reasons:
+- **He bridges business and tech**: he gathers needs and writes specifications, and he has enough technical depth (Python, SQL, Docker, debugging) to be credible with developers.
+- **He is rigorous**: at Fayat IT he was regularly praised for checking the external agency's deliveries and spotting inconsistencies.
+- **He learns fast and takes initiative**: quickly operational at Piano and Fayat, he launched an e-learning project on his own initiative.
+Colleagues also mention his calm under pressure and his positive attitude.`
+    },
+    {
+      id: "fayat", section: "fayat",
+      q: ["What did he do at Fayat IT?", "Tell me about his experience at Fayat.", "What was his role at Fayat?", "Has he managed an IT project?", "Has he worked with vendors or external agencies?"],
+      a: `At **Fayat IT** (IT department of France's largest independent construction group), Mattis worked on the maintenance and evolution of the "Usine à Site", a CMS hosting around **80 subsidiary websites**. He collected and prioritised the subsidiaries' requests, wrote functional and technical specifications for the external agency Clever Age, tracked its work in Jira (Kanban), tested and validated deliveries before production, and communicated releases. He also ran a needs survey to build the CMS roadmap.`
+    },
+    {
+      id: "fayat-training", section: "fayat-training",
+      q: ["Tell me about the training platform he launched.", "Has he launched a project on his own initiative?", "What was the e-learning project?", "Tell me about the LMS project."],
+      a: `On his own initiative at Fayat IT, Mattis proposed an **e-learning platform** to teach CMS contributors the basics, so in-person sessions could focus on specific needs. He audited the existing knowledge-sharing channels, benchmarked e-learning solutions, defined the content and recommended a solution in a business case for management. His work-study contract ended before the decision, but he took the project from idea to a documented recommendation on his own.`
+    },
+    {
+      id: "atinternet", section: "atinternet",
+      q: ["What did he do at AT Internet / Piano?", "What did he do at Piano?", "Tell me about his support experience.", "What was his role at AT Internet?"],
+      a: `At **AT Internet / Piano**, a French web analytics leader, Mattis was a digital analytics consultant in technical support. He handled client tickets in Zendesk (tracking implementation, consent management conflicts, dashboard bugs), analysed logs and configurations, reproduced bugs and escalated them clearly to developers and Product Owners in Jira, then guided clients through the fix. He learned to prioritise many tickets at once and to explain technical issues clearly.`
+    },
+    {
+      id: "atinternet-training", section: "atinternet-training",
+      q: ["Has he trained users or clients?", "Does he have training experience?", "Can he run presentations or demos?"],
+      a: `Yes. At AT Internet / Piano, Mattis ran the **"Welcome Demo"** onboarding sessions for new clients (about 30 minutes: key features, live demo, Q&A). He also wrote user guides and FAQs, and wrote, filmed and edited video tutorials for the public Piano Analytics documentation. Clients gave positive feedback on how clear his explanations were. At Fayat IT he proposed an e-learning platform for the group's website contributors.`
+    },
+    {
+      id: "why-pm", section: "why-pm",
+      q: ["Why project management?", "Why does he want to be a project manager?", "What motivates him?", "Why did he leave support?"],
+      a: `In support at AT Internet, Mattis enjoyed solving problems but only briefly touched other people's projects. In his words, he felt like "a boat repairer helping explorers fix their ships, while wanting nothing more than to follow them." He moved to Fayat IT to run longer-term projects, which confirmed that he wants to structure and steer IT evolutions end to end, as the bridge between business users and technical teams.`
+    },
+    {
+      id: "pierre-fabre", section: "pierre-fabre",
+      q: ["What did he do at Pierre Fabre?", "Tell me about his internship.", "What was his first experience?"],
+      a: `From February to August 2022, Mattis was a **digital project manager intern** at Laboratoires Pierre Fabre, a major French pharmaceutical and dermo-cosmetics group. He managed content on Drupal and WordPress, ran internal and external digital communication, and carried out benchmarks and competitive analyses.`
+    },
+    {
+      id: "australia", section: "australia",
+      q: ["What did he do in Australia?", "Why is there a gap after his studies?", "What has he been doing since graduating?", "What did he do during his working holiday?"],
+      a: `After graduating, Mattis spent November 2025 to October 2026 in **Australia** on a Working Holiday Visa, mainly in Broome. He took non-IT jobs to fund the experience (meal delivery, taxi driver, waiter, construction, order picking, utility worker at a mine site), working in English every day in multicultural teams. It was a deliberate international experience, and it built adaptability, resilience and a strong work ethic.`
+    },
+    {
+      id: "languages", section: "languages",
+      q: ["How good is his English?", "What languages does he speak?", "Does he speak English?", "Can he work in English?"],
+      a: `French is his native language and his English is **B2**, strongly practised: he spent a year working in Australia in multicultural teams, using English every day. At AT Internet / Piano he also wrote English documentation and tutorials for the public Piano Analytics docs.`
+    },
+    {
+      id: "education", section: "education",
+      q: ["What is his degree?", "What did he study?", "Which school did he go to?", "What are his qualifications?"],
+      a: `Mattis holds an **RNCP level 7 title** (French master's level) from Epitech Digital School, specialisation **Data & Fintech** (2025), the last two years as a work-study programme. Before that: a Bachelor "Digital Project Manager" at Digital Campus (Agile/Scrum, cross-functional projects), an Epitech Technology bootcamp, and a French Baccalauréat STI2D in computer and digital systems.`
+    },
+    {
+      id: "skills", section: "skills",
+      q: ["What are his technical skills?", "What tools does he use?", "Does he know Agile or Scrum?", "Can he code?", "What is his tech stack?"],
+      a: `- **Project management**: AMOA, Agile/Scrum, Kanban, Jira, Confluence, specifications, vendor steering, testing and acceptance.
+- **Technical**: Python, SQL, C, JavaScript, HTML, CSS, Docker, Git, Linux.
+- **Data and tools**: Power BI, Piano Analytics, Excel (pivot tables), CMS (Ibexa, Drupal, WordPress), SEO, UI/UX.
+He also knows GDPR/ePrivacy compliance basics.`
+    },
+    {
+      id: "certifications", section: "skills",
+      q: ["Does he have certifications?", "Is he PMP or PSM certified?", "Does he hold a Scrum certification?", "Is he certified?"],
+      a: `Not at the moment: Mattis does not hold a formal project-management certification such as PSM, PMP or PRINCE2. His methods come from his degrees and hands-on practice (Agile/Scrum, Kanban, Jira). He is **open to taking certifications** if the role requires it.`
+    },
+    {
+      id: "business-analyst", section: "business-analyst",
+      q: ["Is he a good fit for a business analyst role?", "Could he work as a business analyst?", "Is he open to other roles?", "Would he consider a product owner role?"],
+      a: `Yes. Beyond IT project manager roles, Mattis fits **business analyst**, AMOA/functional consultant, product owner and data/BI project roles. At Fayat IT he gathered and formalised business needs, wrote specifications and validated deliveries; at AT Internet he analysed client problems and wrote precise bug reports; and his degree is in Data & Fintech. Longer term he aims for managerial roles, ideally on fintech projects.`
+    },
+    {
+      id: "availability", section: "availability",
+      q: ["When can he start, and where?", "When is he available?", "Is he willing to relocate?", "Where is he based?", "What kind of contract is he looking for?"],
+      a: `Mattis is **available immediately** and looking for a permanent position. He is based in Toulouse, open to any location in France and abroad, and eligible for the V.I.E. programme. He has just shown he can relocate quickly with a year in Australia.`
+    },
+    {
+      id: "remote", section: "availability",
+      q: ["Does he want to work remotely?", "Is he open to hybrid work?", "Does he prefer remote or on site?", "How many remote days does he want?"],
+      a: `Mattis prefers working **on site**. A hybrid setup with **one remote day mid-week** also suits him well.`
+    },
+    {
+      id: "sector", section: "availability",
+      q: ["Which industry does he want to work in?", "Does he have a sector preference?", "Is he interested in banking?"],
+      a: `He has no strict sector preference and is open to any industry, with a **particular interest in banking and finance (fintech)**, the field of his degree and his diploma thesis.`
+    },
+    {
+      id: "salary", section: "availability",
+      q: ["What are his salary expectations?", "How much does he want to earn?", "What salary is he looking for?"],
+      a: `It depends on the location, and Mattis prefers to discuss salary **directly with you**. Click "Get his contact details" to reach him.`
+    },
+    {
+      id: "growth", section: "growth",
+      q: ["What is he working on improving?", "What are his weaknesses?", "What are his areas for improvement?"],
+      a: `Mattis named three areas himself and works on each: **prioritisation** (he sometimes wants to handle too much at once, so he practises prioritisation methods), **following dense meetings** (structured notes, a summary of decisions and actions after each meeting, tracking in Jira and Confluence), and **speaking up in large groups** (he reaches out early; his year in varied teams in Australia helped a lot).`
+    },
+    {
+      id: "thesis-fintech", section: "thesis-fintech",
+      q: ["What was his thesis about?", "Tell me about his research.", "Does he know fintech?"],
+      a: `His diploma thesis asked: "How can fintech reduce our dependence on state financial institutions?" He studied French artisans' relationship with banks, DeFi lending, neobanks and NGO microcredit, then specified a web and mobile platform (React) with collateral-backed loans, "solidarity loans" funding local artisans, and microcredit pools, automated by smart contracts. It shows he can research a complex domain and turn it into product specifications.`
+    },
+    {
+      id: "interests", section: "interests",
+      q: ["What does he do outside work?", "What are his hobbies?", "What are his interests?"],
+      a: `Outside work, Mattis enjoys photography, team sports (football, rugby, handball), weight training, cars and motorcycles, and he follows technology trends closely, including fintech.`
     }
   ],
 

@@ -133,6 +133,8 @@
 </style>
 <script src="knowledge.js"></script>
 <script src="knowledge-fr.js"></script>
+<script src="retrieval.js"></script>
+<script src="semantic.js"></script>
 </head>
 <body>
 <div class="app">
@@ -205,7 +207,7 @@ const T = {
     stepOf: "Step {n} of {total}",
     s1Title: "Choose the AI model",
     s1Intro: "The assistant runs on your device, on its graphics card, so nothing is sent to a server. A larger model gives better answers but takes longer to reply.",
-    devDesktop: "Your device: computer with a compatible graphics card.",
+    devDesktop: "Your device: computer with a compatible graphics card. With an AI model, a small search model (~120 MB) is also downloaded so the assistant understands rephrased questions.",
     devMobile: "Your device: phone or tablet. Larger models would run out of memory here, so only the lightest one is offered.",
     devLowMem: "Your device: computer with limited memory. Only the lightest model is offered.",
     recommended: "Recommended for your device", cached: "Already downloaded",
@@ -237,6 +239,9 @@ const T = {
     quickTagIdle: "Quick answer from the profile · start the AI assistant above for a conversational answer",
     quickTagLoading: "Quick answer from the profile · the AI assistant is still loading",
     aiError: "The AI hit an error, so this is a quick answer from the profile.",
+    validated: "✓ Verified answer from Mattis's profile",
+    guardTag: "The AI's answer mentioned details that are not in the profile, so here is the profile extract instead.",
+    semLoading: " · preparing the search by meaning…", semReady: " · search by meaning on",
   },
   fr: {
     title: "Questions sur Mattis", contactTop: "Contacter Mattis", placeholder: "Votre question sur Mattis…", send: "Envoyer",
@@ -259,7 +264,7 @@ const T = {
     stepOf: "Étape {n} sur {total}",
     s1Title: "Choisissez le modèle d'IA",
     s1Intro: "L'assistant tourne sur votre appareil, sur sa carte graphique : rien n'est envoyé à un serveur. Un modèle plus gros donne de meilleures réponses mais met plus de temps à répondre.",
-    devDesktop: "Votre appareil : ordinateur avec une carte graphique compatible.",
+    devDesktop: "Votre appareil : ordinateur avec une carte graphique compatible. Avec un modèle d'IA, un petit modèle de recherche (~120 Mo) est aussi téléchargé pour que l'assistant comprenne les questions reformulées.",
     devMobile: "Votre appareil : téléphone ou tablette. Les modèles plus gros manqueraient de mémoire ici, seul le plus léger est proposé.",
     devLowMem: "Votre appareil : ordinateur avec peu de mémoire. Seul le modèle le plus léger est proposé.",
     recommended: "Conseillé pour votre appareil", cached: "Déjà téléchargé",
@@ -291,6 +296,9 @@ const T = {
     quickTagIdle: "Réponse rapide tirée du profil · lancez l'assistant IA ci-dessus pour une réponse conversationnelle",
     quickTagLoading: "Réponse rapide tirée du profil · l'assistant IA est encore en cours de chargement",
     aiError: "L'IA a rencontré une erreur : voici une réponse rapide tirée du profil.",
+    validated: "✓ Réponse vérifiée, tirée du profil de Mattis",
+    guardTag: "La réponse de l'IA citait des éléments absents du profil : voici l'extrait du profil à la place.",
+    semLoading: " · préparation de la recherche par le sens…", semReady: " · recherche par le sens activée",
   },
 };
 
@@ -308,22 +316,8 @@ const session = {
 let LANG = store.get("lang") || ((navigator.language || "en").toLowerCase().startsWith("fr") && FR ? "fr" : "en");
 const t = (k, v = {}) => (T[LANG][k] ?? T.en[k]).replace(/\{(\w+)\}/g, (_, n) => v[n] ?? "");
 
-// Profile in the chosen language: French texts replace the English ones section by section (same ids).
-function localize(lang) {
-  if (lang !== "fr" || !FR) return BASE;
-  const byId = (arr, id) => (arr || []).find(x => x.id === id) || {};
-  return {
-    ...BASE,
-    headline: FR.headline || BASE.headline, location: FR.location || BASE.location, core: FR.core || BASE.core,
-    sections: BASE.sections.map(s => { const f = byId(FR.sections, s.id); return { ...s, ...f, keywords: [...s.keywords, ...(f.keywords || [])] }; }),
-    roles: BASE.roles.map(r => {
-      const f = byId(FR.roles, r.id);
-      const match = r.match && f.match ? new RegExp(`${r.match.source}|${f.match.source}`, "i") : r.match || f.match || null;
-      return { ...r, ...f, match, focus: r.focus };
-    }),
-    funnel: { ...BASE.funnel, ...FR.funnel },
-  };
-}
+// Profile in the chosen language (French texts replace the English ones, see retrieval.js).
+const localize = lang => Retrieval.localize(BASE, FR, lang);
 
 // Models offered. `id` gets the "-q4f16_1-MLC" or "-q4f32_1-MLC" suffix depending on GPU support.
 // speed / quality are shown as 1-3 dots on the model cards.
@@ -361,41 +355,18 @@ function readCrash() {
 addEventListener("pagehide", clearBusy);
 
 // ---------- Profile content (built when the chat starts, in the chosen language) ----------
-let P = localize(LANG), F = P.funnel, docs = [], df = new Map(), STOP = new Set();
-const STOP_EN = "a an the and or of to in on for with at by from is are was were be been his he him her she it its this that what which who how do does did can could would should about tell me you your i my we our has have had as any some more than there their they them into also just";
-const STOP_FR = "le la les un une des du de d l et ou au aux en dans sur pour par avec est sont etait il elle lui son sa ses ce cet cette ces que qu qui quoi quel quelle quels quelles comment ne n pas vous votre vos je j me m mon ma mes nous notre se s on y fait faire peut peux pouvez parle parlez dire dites moi a-t-il est-ce t c avez ete";
-const norm = s => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
-const tokens = s => norm(s).split(/[^a-z0-9.+#-]+/).map(t => t.replace(/^[.-]+|[.-]+$/g, "")).filter(t => t && !STOP.has(t)).map(t => t.length > 4 && t.endsWith("s") ? t.slice(0, -1) : t);
-
+let P = localize(LANG), F = P.funnel, idx = null, docs = [];
 function buildContent() {
   P = localize(LANG); F = P.funnel;
-  STOP = new Set((STOP_EN + (LANG === "fr" ? " " + STOP_FR : "")).split(" "));
-  docs = P.sections.map(s => ({ ...s, kw: new Set(s.keywords.flatMap(tokens)), title_t: new Set(tokens(s.title)), body: new Set(tokens(s.text)) }));
-  df = new Map();
-  for (const d of docs) for (const tk of d.body) df.set(tk, (df.get(tk) || 0) + 1);
+  idx = Retrieval.create(P, LANG);
+  docs = idx.docs;
 }
-const idf = tk => Math.log(1 + docs.length / (df.get(tk) || docs.length));
-
-function retrieve(query, k = 3, withScore = false) {
-  const q = [...new Set(tokens(query))];
-  const scored = docs.map(d => {
-    let s = 0;
-    for (const tk of q) {
-      if (d.kw.has(tk)) s += 3;
-      if (d.title_t.has(tk)) s += 2;
-      if (d.body.has(tk)) s += idf(tk);
-    }
-    return { d, s };
-  }).sort((a, b) => b.s - a.s);
-  if (withScore) return scored[0];
-  const hits = scored.filter(x => x.s >= 2).slice(0, k).map(x => x.d);
-  return hits.length ? hits : ["fayat", "strengths", "atinternet"].map(id => docs.find(d => d.id === id));
-}
+const retrieve = (query, k, qVec) => idx.retrieve(query, k, qVec);
 
 // A broad "who is he" question gets the summary; a specific topic ("tell me about his degree") gets its section.
 const PITCH_RE = /\b(pitch|summary|summari[sz]e|overview|introduce|who is|about (him|mattis)|profile|background|tell me about)\b|r[ée]sum|pr[ée]sente|qui est|profil|parcours|parle[sz]?-moi de|en bref/i;
 // ("résumé" also matches the English "resume" keyword of the contact section, hence the exception.)
-const isPitch = q => { if (!PITCH_RE.test(q)) return false; const top = retrieve(q, 1, true); return top.s < 3 || top.d.id === "contact"; };
+const isPitch = q => { if (!PITCH_RE.test(q)) return false; const top = idx.topScore(q); return top.s < 3 || top.d.id === "contact"; };
 
 function rules() {
   if (LANG === "fr") return `Tu es l'assistant de recrutement de ${P.name}. Tu échanges avec des recruteurs et des responsables du recrutement sur son profil professionnel, et ton objectif est de leur donner envie de le rencontrer en entretien.
@@ -489,6 +460,8 @@ const CONTACT_INTENT = {
   en: /contact|reach (him|out|mattis)|e-?mail|phone|call him|linkedin|\bcv\b|resume|résumé|interview|get in touch|meet (him|mattis)|schedule/i,
   fr: /contact|coordonn|joindre|e-?mail|\bmail\b|courriel|t[ée]l[ée]phone|appeler|linkedin|\bcv\b|entretien|rencontrer|rendez-vous/i,
 };
+// "A gap in his CV" is a question about his background, not a request for contact details.
+const NOT_CONTACT = /\bgaps?\b|\btrou|blank|vide dans/i;
 const ROLE_STATEMENT = /recruit|hiring|hire for|looking for|position|vacancy|opening|\brole\b|\bjob\b|recrute|cherche|poste|offre/i;
 
 function setChips(items, hint = "") {
@@ -600,7 +573,7 @@ function refreshEngine() {
   const s = engineState, pref = savedModel();
   $("dot").className = "dot" + (s === "ready" ? " ok" : s === "loading" ? " busy" : "");
   $("engineText").textContent =
-    s === "ready" ? t("engReady", { m: MODELS[current].short }) :
+    s === "ready" ? t("engReady", { m: MODELS[current].short }) + (semState === "loading" ? t("semLoading") : semState === "ready" ? t("semReady") : "") :
     s === "loading" ? progressText() :
     s === "failed" ? t("engFail") :
     s === "unsupported" || pref === "quick" ? t("engQuick") : s === "none" ? t("checking") : t("engIdle");
@@ -629,10 +602,33 @@ async function loadModel(i) {
     }, CHAT_OPTS);
     clearBusy();
     engineState = "ready"; device.cached[i] = true;
+    if (!LOW_MEM) startSemantic();
   } catch (e) {
     console.error(e);
     clearBusy();
     engineState = "failed"; loadError = String(e?.message || e).slice(0, 300);
+  }
+  refreshEngine();
+}
+
+// Search by meaning (computers only, once the AI model is ready): a small embedding model compares the question
+// with each profile section and validated answer. Keyword search is used until it is ready, or if it fails.
+let semState = "off"; // off | loading | ready | failed
+let resolveChat; const chatReady = new Promise(r => { resolveChat = r; });
+async function startSemantic() {
+  if (semState !== "off" || !window.Semantic) return;
+  semState = "loading"; refreshEngine();
+  try {
+    await Semantic.load();
+    await chatReady; // the profile is built in the chosen language when the chat starts
+    const jobs = idx.embeddingJobs();
+    const sv = await Semantic.embed(jobs.sections.map(x => x.text), "passage");
+    const fv = await Semantic.embed(jobs.faq.map(x => x.text), "query");
+    idx.setVectors(sv, fv);
+    semState = "ready";
+  } catch (e) {
+    console.error("Search by meaning unavailable:", e);
+    semState = "failed";
   }
   refreshEngine();
 }
@@ -786,6 +782,7 @@ function closeSettings(apply) {
 function startChat() {
   if (chatStarted) return;
   chatStarted = true;
+  resolveChat();
   store.set("lang", LANG);
   buildContent(); applyTexts();
   wizard.hidden = true; $("chatUI").hidden = false;
@@ -808,9 +805,18 @@ function trimToSentence(text) {
   return end > text.length * 0.4 ? text.slice(0, end + 1) : text.trimEnd() + "…";
 }
 
-function quickAnswer(q) {
+const DEBUG = new URLSearchParams(location.search).has("debug"); // ?debug in the address shows how each answer was found
+const tagText = (base, extra) => base + (DEBUG && extra ? ` · ${extra}` : "");
+
+// Embedding of the question once the semantic search is ready; null otherwise (keyword search is used then).
+async function queryVector(q) {
+  if (!idx.hasVectors()) return null;
+  try { return (await Semantic.embed([q], "query"))[0]; } catch (e) { console.error(e); return null; }
+}
+
+function quickAnswer(q, qVec) {
   if (isPitch(q)) return P.core;
-  const [top, ...rest] = retrieve(q, 3);
+  const [top, ...rest] = retrieve(q, 3, qVec);
   let a = `**${top.title}**\n${top.text}`;
   if (rest.length) a += `\n\n${t("related")}${LANG === "fr" ? " : " : ": "}${rest.map(d => d.title).join(" · ")}`;
   return a;
@@ -830,29 +836,42 @@ async function ask(q) {
   }
 
   // Conversion: contact requests always get the contact card, whatever the mode.
-  if (CONTACT_INTENT[LANG].test(q)) { showContact(); nextStep(); return; }
+  if (CONTACT_INTENT[LANG].test(q) && !NOT_CONTACT.test(q)) { showContact(); nextStep(); return; }
 
-  retrieve(q, 1).forEach(d => seen.add(d.id));
   answers++;
-
-  if (engineState !== "ready") {
-    const tag = engineState === "loading" ? t("quickTagLoading") : engineState === "idle" || engineState === "failed" ? t("quickTagIdle") : t("quickTag");
-    botSay(quickAnswer(q), tag);
-    afterAnswer(q);
-    return;
-  }
-
   busy = true; sendBtn.disabled = true;
+  const qVec = await queryVector(q);
+  const faq = idx.findFaq(q, qVec);
+  if (faq) {
+    // A validated answer: shown word for word, no AI involved.
+    seen.add(faq.item.section);
+    botSay(faq.item.a, tagText(t("validated"), `${faq.item.id} ${faq.score.toFixed(3)} (${faq.how})`));
+  } else {
+    const hits = retrieve(q, 3, qVec);
+    seen.add(hits[0].id);
+    if (engineState !== "ready") {
+      const tag = engineState === "loading" ? t("quickTagLoading") : engineState === "idle" || engineState === "failed" ? t("quickTagIdle") : t("quickTag");
+      botSay(quickAnswer(q, qVec), tagText(tag, hits.map(d => d.id).join(", ") + (qVec ? " (meaning)" : " (words)")));
+    } else await aiAnswer(q, qVec);
+  }
+  busy = false; sendBtn.disabled = false;
+  if (engineState === "ready") input.focus();
+  afterAnswer(q);
+}
+
+async function aiAnswer(q, qVec) {
   const prevUser = history.filter(m => m.role === "user").at(-2)?.content || "";
-  const ctx = retrieve(q + " " + prevUser, BUDGET.sections).map(d => `## ${d.title}\n${d.text}`).join("\n\n");
+  const sections = retrieve(q + " " + prevUser, BUDGET.sections, qVec);
+  const ctx = sections.map(d => `## ${d.title}\n${d.text}`).join("\n\n");
   const H = LANG === "fr" ? ["Recruteur", "Résumé du profil", "Détails pertinents"] : ["Recruiter", "Profile summary", "Relevant details"];
   const system = `${rules()}\n\n# ${H[0]}\n${leadInfo()}\n\n# ${H[1]}\n${P.core}\n\n# ${H[2]}\n${ctx}`;
   const recent = history.slice(-1 - BUDGET.history, -1).map(m => ({ role: m.role, content: m.content.slice(0, 700) }));
   const messages = [{ role: "system", content: system }, ...recent, { role: "user", content: q }];
+  const debugInfo = sections.map(d => d.id).join(", ") + (qVec ? " (meaning)" : " (words)");
 
   const bubble = addMsg("bot", "");
   bubble.classList.add("cursor");
-  let text = "";
+  let text = "", tag = DEBUG ? debugInfo : "";
   try {
     markBusy("generate", current);
     const stream = await engine.chat.completions.create({ messages, stream: true, temperature: 0.4, top_p: 0.9, max_tokens: BUDGET.maxTokens });
@@ -865,18 +884,25 @@ async function ask(q) {
     }
     clearBusy();
     // The hard cap stopped the model mid-sentence: keep only complete sentences.
-    if (cut) { text = trimToSentence(text); bubble.innerHTML = render(text); }
+    if (cut) text = trimToSentence(text);
     store.del(CRASHED_KEY); // a full answer went through: the device can handle it
+    // Guard: an answer citing a number, name, email or link that the model was not given is replaced by the
+    // profile extract.
+    const check = Retrieval.groundCheck(text, [system, ...recent.map(m => m.content), q].join("\n"));
+    if (!check.ok) {
+      console.warn("Answer rejected by the guard:", check, text);
+      text = quickAnswer(q, qVec);
+      tag = tagText(t("guardTag"), `${debugInfo} · unknown: ${[...check.unknown, ...check.names].join(", ")}`);
+    }
   } catch (e) {
     console.error(e);
     clearBusy();
-    text = text || quickAnswer(q);
-    bubble.innerHTML = render(text) + `<span class="tag">${esc(t("aiError"))}</span>`;
+    text = text || quickAnswer(q, qVec);
+    tag = t("aiError");
   }
+  bubble.innerHTML = render(text) + (tag ? `<span class="tag">${esc(tag)}</span>` : "");
   bubble.classList.remove("cursor");
   history.push({ role: "assistant", content: text });
-  busy = false; sendBtn.disabled = false; input.focus();
-  afterAnswer(q);
 }
 
 function afterAnswer(q) {
