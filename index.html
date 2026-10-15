@@ -142,6 +142,12 @@
 <script src="knowledge-fr.js"></script>
 <script src="retrieval.js"></script>
 <script src="semantic.js"></script>
+<script>
+// Visitor statistics with GoatCounter (open source, no cookies, nothing stored on the device, hosted in the EU).
+// Put your GoatCounter code here (the "xxx" in xxx.goatcounter.com); empty = statistics off.
+// Only the page view is counted: the conversation, the role picked and the questions are never sent.
+window.STATS_CODE = "";
+</script>
 </head>
 <body>
 <div class="app">
@@ -253,8 +259,10 @@ const T = {
     validated: "✓ Verified answer from Mattis's profile",
     guardTag: "The AI's answer mentioned details that are not in the profile, so here is the profile extract instead.",
     semLoading: " · preparing the search by meaning…", semReady: " · search by meaning on",
+    statsNote: "To count visits, the site uses GoatCounter (open source, no cookies, hosted in the EU): only the visit itself is recorded anonymously (page, referring site, browser, screen size, country), never your questions.",
   },
   fr: {
+    statsNote: "Pour compter les visites, le site utilise GoatCounter (open source, sans cookie, hébergé dans l'UE) : seule la visite est enregistrée, de façon anonyme (page, site d'origine, navigateur, taille d'écran, pays), jamais vos questions.",
     title: "Questions sur Mattis", contactTop: "Contacter Mattis", placeholder: "Votre question sur Mattis…", send: "Envoyer",
     footer: "L'IA tourne entièrement sur votre appareil et elle est supprimée à la fermeture de l'onglet : vos questions et les réponses ne sont jamais envoyées à un serveur. Les réponses sont générées à partir du CV et des mémoires de Mattis et peuvent contenir des erreurs.",
     settings: "Modèle et langue", startAi: "Lancer l'assistant IA ({size})", useAi: "Utiliser l'assistant IA", retry: "Réessayer",
@@ -329,6 +337,17 @@ const session = {
 
 // Interface language: the saved choice, otherwise the browser's language until the recruiter picks one.
 let LANG = store.get("lang") || ((navigator.language || "en").toLowerCase().startsWith("fr") && FR ? "fr" : "en");
+// ---------- Visitor statistics (page view only, see STATS_CODE in <head>) ----------
+const STATS = /^[a-z0-9-]+$/.test(window.STATS_CODE || "");
+if (STATS) {
+  const gc = document.createElement("script");
+  gc.async = true;
+  gc.src = "https://gc.zgo.at/count.js";
+  gc.dataset.goatcounter = `https://${window.STATS_CODE}.goatcounter.com/count`;
+  gc.dataset.goatcounterSettings = JSON.stringify({ no_events: true });
+  document.head.appendChild(gc);
+}
+
 const t = (k, v = {}) => (T[LANG][k] ?? T.en[k]).replace(/\{(\w+)\}/g, (_, n) => v[n] ?? "");
 
 // Profile in the chosen language (French texts replace the English ones, see retrieval.js).
@@ -430,7 +449,7 @@ function applyTexts() {
   $("contactTop").textContent = t("contactTop");
   input.placeholder = t("placeholder"); input.setAttribute("aria-label", t("placeholder"));
   sendBtn.textContent = t("send");
-  $("footer").textContent = t("footer");
+  $("footer").textContent = t("footer") + (STATS ? " " + t("statsNote") : "");
   $("settingsBtn").textContent = t("settings");
 }
 
@@ -696,7 +715,7 @@ function showWizard(steps, mode) {
 const dots = n => `<b aria-label="${n}/3">${"●".repeat(n)}${"○".repeat(3 - n)}</b>`;
 
 function stepModel() {
-  let h = wz.mode === "settings" ? "" : `<div class="about"><h2>${esc(t("aboutTitle"))}</h2><p>${esc(t("aboutWhy"))}</p><p>${esc(t("aboutHow"))}</p><p>${esc(t("aboutPrivacy"))}</p></div>`;
+  let h = wz.mode === "settings" ? "" : `<div class="about"><h2>${esc(t("aboutTitle"))}</h2><p>${esc(t("aboutWhy"))}</p><p>${esc(t("aboutHow"))}</p><p>${esc(t("aboutPrivacy"))}${STATS ? " " + esc(t("statsNote")) : ""}</p></div>`;
   h += `<h2>${esc(t("s1Title"))}</h2>`;
   if (!device.probed) return h + `<p class="muted">${esc(t("checking"))}</p>`;
   h += `<p class="muted">${esc(t("s1Intro"))}</p>`;
