@@ -89,6 +89,10 @@
   .wizard h2 { font-size: 20px; margin: 0 0 6px; }
   .wizard .muted { color: var(--muted); margin: 0 0 12px; }
   .wizard .small { font-size: 13px; }
+  .about { border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; margin: 0 0 18px; }
+  .about h2 { margin-top: 0; }
+  .about p { margin: 0 0 8px; }
+  .about p:last-child { margin: 0; font-weight: 600; }
   .device { background: var(--bot); border-radius: 10px; padding: 8px 12px; font-size: 13.5px; margin: 0 0 14px; }
   .opts { display: grid; gap: 10px; }
   .opt { display: block; width: 100%; text-align: left; background: var(--panel); color: var(--text); border: 1.5px solid var(--border); border-radius: 12px; padding: 12px 14px; font-weight: 400; }
@@ -188,7 +192,7 @@ if (!BASE) {
 const T = {
   en: {
     title: "Ask about Mattis", contactTop: "Contact Mattis", placeholder: "Ask anything about Mattis's profile…", send: "Send",
-    footer: "The AI runs entirely on your device and is deleted when you close the tab; your questions are never sent to a server. Answers are generated from Mattis's CV and theses and may contain mistakes.",
+    footer: "The AI runs entirely on your device and is deleted when you close the tab; your questions and the answers are never sent to a server. Answers are generated from Mattis's CV and theses and may contain mistakes.",
     settings: "Model & language", startAi: "Start the AI assistant ({size})", useAi: "Use the AI assistant", retry: "Try again",
     checking: "Checking your device…",
     engQuick: "Quick-answer mode: answers come straight from Mattis's profile.",
@@ -206,7 +210,11 @@ const T = {
     crashHeavy: "The previous AI model was too heavy for this device, so the page reloaded. The lightest model is now selected.",
     stepOf: "Step {n} of {total}",
     s1Title: "Choose the AI model",
-    s1Intro: "The assistant runs on your device, on its graphics card, so nothing is sent to a server. A larger model gives better answers but takes longer to reply. The model is deleted from your device when you close the tab.",
+    aboutTitle: "Why this assistant?",
+    aboutWhy: "Mattis built this assistant so recruiters can get to know his profile in a few minutes: ask anything about his experience, skills or availability, get an answer right away, then contact him in one click.",
+    aboutHow: "Answers come only from his CV and his two theses. If your device allows it, you can choose an AI model below: it is downloaded into your browser and runs on your device's graphics card. Without the AI, quick answers show the matching passage of his profile.",
+    aboutPrivacy: "Everything is processed locally on your device: your questions and the answers are never sent to a server, and the model is deleted when you close the tab.",
+    s1Intro: "A larger model gives better answers but takes longer to reply.",
     devDesktop: "Your device: computer with a compatible graphics card. With an AI model, a small search model (~120 MB) is also downloaded so the assistant understands rephrased questions.",
     devMobile: "Your device: phone or tablet. Larger models would run out of memory here, so only the lightest one is offered.",
     devLowMem: "Your device: computer with limited memory. Only the lightest model is offered.",
@@ -245,7 +253,7 @@ const T = {
   },
   fr: {
     title: "Questions sur Mattis", contactTop: "Contacter Mattis", placeholder: "Votre question sur Mattis…", send: "Envoyer",
-    footer: "L'IA tourne entièrement sur votre appareil et elle est supprimée à la fermeture de l'onglet : vos questions ne sont jamais envoyées à un serveur. Les réponses sont générées à partir du CV et des mémoires de Mattis et peuvent contenir des erreurs.",
+    footer: "L'IA tourne entièrement sur votre appareil et elle est supprimée à la fermeture de l'onglet : vos questions et les réponses ne sont jamais envoyées à un serveur. Les réponses sont générées à partir du CV et des mémoires de Mattis et peuvent contenir des erreurs.",
     settings: "Modèle et langue", startAi: "Lancer l'assistant IA ({size})", useAi: "Utiliser l'assistant IA", retry: "Réessayer",
     checking: "Analyse de votre appareil…",
     engQuick: "Mode réponses rapides : les réponses viennent directement du profil de Mattis.",
@@ -263,7 +271,11 @@ const T = {
     crashHeavy: "Le modèle précédent était trop lourd pour cet appareil, la page s'est donc rechargée. Le modèle le plus léger est maintenant sélectionné.",
     stepOf: "Étape {n} sur {total}",
     s1Title: "Choisissez le modèle d'IA",
-    s1Intro: "L'assistant tourne sur votre appareil, sur sa carte graphique : rien n'est envoyé à un serveur. Un modèle plus gros donne de meilleures réponses mais met plus de temps à répondre. Le modèle est supprimé de votre appareil à la fermeture de l'onglet.",
+    aboutTitle: "Pourquoi cet assistant ?",
+    aboutWhy: "Mattis a conçu cet assistant pour que les recruteurs découvrent son profil en quelques minutes : posez n'importe quelle question sur son expérience, ses compétences ou sa disponibilité, obtenez une réponse tout de suite, puis contactez-le en un clic.",
+    aboutHow: "Les réponses viennent uniquement de son CV et de ses deux mémoires. Si votre appareil le permet, vous pouvez choisir ci-dessous un modèle d'IA : il est téléchargé dans votre navigateur et tourne sur la carte graphique de votre appareil. Sans l'IA, les réponses rapides affichent le passage de son profil qui correspond à votre question.",
+    aboutPrivacy: "Tout est traité en local sur votre appareil : vos questions et les réponses ne sont jamais envoyées à un serveur, et le modèle est supprimé à la fermeture de l'onglet.",
+    s1Intro: "Un modèle plus gros donne de meilleures réponses mais met plus de temps à répondre.",
     devDesktop: "Votre appareil : ordinateur avec une carte graphique compatible. Avec un modèle d'IA, un petit modèle de recherche (~120 Mo) est aussi téléchargé pour que l'assistant comprenne les questions reformulées.",
     devMobile: "Votre appareil : téléphone ou tablette. Les modèles plus gros manqueraient de mémoire ici, seul le plus léger est proposé.",
     devLowMem: "Votre appareil : ordinateur avec peu de mémoire. Seul le modèle le plus léger est proposé.",
@@ -652,7 +664,8 @@ function showWizard(steps, mode) {
 const dots = n => `<b aria-label="${n}/3">${"●".repeat(n)}${"○".repeat(3 - n)}</b>`;
 
 function stepModel() {
-  let h = `<h2>${esc(t("s1Title"))}</h2>`;
+  let h = wz.mode === "settings" ? "" : `<div class="about"><h2>${esc(t("aboutTitle"))}</h2><p>${esc(t("aboutWhy"))}</p><p>${esc(t("aboutHow"))}</p><p>${esc(t("aboutPrivacy"))}</p></div>`;
+  h += `<h2>${esc(t("s1Title"))}</h2>`;
   if (!device.probed) return h + `<p class="muted">${esc(t("checking"))}</p>`;
   h += `<p class="muted">${esc(t("s1Intro"))}</p>`;
   h += `<p class="device">${esc(device.gpu ? t(IS_MOBILE ? "devMobile" : LOW_MEM ? "devLowMem" : "devDesktop") : t(device.reason))}</p>`;
