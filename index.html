@@ -64,7 +64,10 @@
   .bubble a { color: var(--accent); }
   .msg.user .bubble a { color: inherit; }
   .tag { display: inline-block; font-size: 11.5px; color: var(--muted); margin-top: 6px; }
-  .cursor::after { content: "▍"; animation: pulse .6s infinite alternate; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  .fade-in { animation: fadeIn .35s ease-out; }
+  @media (prefers-reduced-motion: reduce) { .fade-in { animation: none; } }
+  .cursor:empty::after, .cursor > p:last-child::after, .cursor > ul:last-child > li:last-child::after { content: "▍"; animation: pulse .6s infinite alternate; }
   .chips { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: thin; padding-bottom: 2px; }
   .chip { background: var(--accent-soft); color: var(--accent); border: 0; font-weight: 500; border-radius: 999px; padding: 6px 12px; font-size: 13.5px; white-space: nowrap; flex: none; }
   form { display: flex; gap: 8px; }
@@ -498,19 +501,47 @@ function nextStep() {
   setChips(contactShown ? picks : [contactChip(), ...picks], t("hintNext"));
 }
 
-function botSay(text, tag) {
-  const b = addMsg("bot", text, tag);
-  history.push({ role: "assistant", content: text });
+// Messages are shown one after the other: a saved answer is typed out word by word, like a generated one, and
+// the next message waits for it.
+let chain = Promise.resolve();
+const queue = fn => (chain = chain.then(fn).catch(e => console.error(e)));
+const REDUCED_MOTION = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+async function typeOut(text, tag) {
+  if (REDUCED_MOTION) return addMsg("bot", text, tag);
+  const b = addMsg("bot", "");
+  b.classList.add("cursor");
+  const words = text.match(/\S+\s*/g) || [];
+  const step = Math.max(1, Math.ceil(words.length / 90)); // about 30 words a second, 3 seconds at most
+  await sleep(250);
+  for (let n = step; n < words.length + step; n += step) {
+    let part = words.slice(0, n).join("");
+    if ((part.match(/\*\*/g) || []).length % 2) part += "**"; // close bold text cut in the middle
+    b.innerHTML = render(part);
+    chat.scrollTop = chat.scrollHeight;
+    await sleep(30);
+  }
+  b.classList.remove("cursor");
+  b.innerHTML = render(text) + (tag ? `<span class="tag">${esc(tag)}</span>` : "");
+  chat.scrollTop = chat.scrollHeight;
   return b;
 }
-function userSay(text) { addMsg("user", text); history.push({ role: "user", content: text }); }
+function botSay(text, tag) {
+  history.push({ role: "assistant", content: text });
+  return queue(() => typeOut(text, tag));
+}
+function userSay(text) {
+  history.push({ role: "user", content: text });
+  return queue(() => addMsg("user", text));
+}
 
 function chooseRole(r, typed = false) {
   if (busy) return;
   lead.role = r; lead.exploring = false;
   if (!typed) userSay(t("recruitingFor", { role: r.label }));
   botSay(r.custom ? F.customPitch.replace("{role}", r.label) : r.pitch);
-  nextStep();
+  queue(nextStep);
 }
 
 // A position typed in the "Other" field: reuse a known role's pitch when it matches, otherwise a generic one.
@@ -655,8 +686,9 @@ async function startSemantic() {
 // 1 = model, 2 = language (while the model downloads), 3 = position. Revisits only show step 3.
 const wz = { steps: [], idx: 0, mode: "onboard", model: null, recruiting: null, role: null, other: "", crash: null, langAtOpen: null, modelAtOpen: null };
 
+function fadeIn(el) { el.classList.remove("fade-in"); void el.offsetWidth; el.classList.add("fade-in"); }
 function showWizard(steps, mode) {
-  Object.assign(wz, { steps, mode, idx: 0 });
+  Object.assign(wz, { steps, mode, idx: 0, shown: null });
   wizard.hidden = false; $("chatUI").hidden = true;
   renderWizard();
 }
@@ -724,7 +756,10 @@ function renderWizard() {
   const step = wz.steps[wz.idx];
   let h = "";
   if (wz.steps.length > 1) h += `<p class="wz-count">${esc(t("stepOf", { n: wz.idx + 1, total: wz.steps.length }))}</p><div class="wz-dots">${wz.steps.map((_, i) => `<span class="${i <= wz.idx ? "on" : ""}"></span>`).join("")}</div>`;
-  h += `<div>${{ 1: stepModel, 2: stepLang, 3: stepRole }[step]()}</div>`;
+  // Fade in when the step changes, not when an option is picked on the same step.
+  const fade = wz.shown !== `${wz.mode}:${wz.idx}:${step}` ? " fade-in" : "";
+  wz.shown = `${wz.mode}:${wz.idx}:${step}`;
+  h += `<div class="wz-body${fade}">${{ 1: stepModel, 2: stepLang, 3: stepRole }[step]()}</div>`;
   wizard.innerHTML = h;
   fillDl();
   const other = $("wzOther");
@@ -801,7 +836,7 @@ async function closeSettings(apply) {
     if (langChanged) return restartChat();
   }
   applyTexts();
-  wizard.hidden = true; $("chatUI").hidden = false;
+  wizard.hidden = true; $("chatUI").hidden = false; fadeIn($("chatUI"));
   refreshEngine();
 }
 
@@ -823,7 +858,7 @@ function startChat() {
   store.set("lang", LANG);
   buildContent(); applyTexts();
   if (semState === "ready") embedProfile().catch(e => console.error(e)); // after a language change
-  wizard.hidden = true; $("chatUI").hidden = false;
+  wizard.hidden = true; $("chatUI").hidden = false; fadeIn($("chatUI"));
   botSay(F.welcome);
   if (wz.recruiting === "yes" && roleReady()) {
     chooseRole(wz.role === "other" ? customRole(wz.other.trim()) : P.roles.find(r => r.id === wz.role));
@@ -831,8 +866,8 @@ function startChat() {
     lead.exploring = true;
     userSay(t("exploring"));
     botSay(F.explore);
-    nextStep();
-  } else nextStep();
+    queue(nextStep);
+  } else queue(nextStep);
   refreshEngine();
   if (!IS_MOBILE) input.focus();
 }
@@ -864,7 +899,8 @@ async function ask(q) {
   q = q.trim();
   if (!q || busy || !chatStarted) return;
   input.value = ""; autosize();
-  userSay(q);
+  busy = true; await chain; busy = false; // let the previous message finish typing
+  await userSay(q);
 
   // Recruiter states the role they are hiring for.
   if (!lead.role) {
@@ -883,13 +919,13 @@ async function ask(q) {
   if (faq) {
     // A validated answer: shown word for word, no AI involved.
     seen.add(faq.item.section);
-    botSay(faq.item.a, tagText(t("validated"), `${faq.item.id} ${faq.score.toFixed(3)} (${faq.how})`));
+    await botSay(faq.item.a, tagText(t("validated"), `${faq.item.id} ${faq.score.toFixed(3)} (${faq.how})`));
   } else {
     const hits = retrieve(q, 3, qVec);
     seen.add(hits[0].id);
     if (engineState !== "ready") {
       const tag = engineState === "loading" ? t("quickTagLoading") : engineState === "idle" || engineState === "failed" ? t("quickTagIdle") : t("quickTag");
-      botSay(quickAnswer(q, qVec), tagText(tag, hits.map(d => d.id).join(", ") + (qVec ? " (meaning)" : " (words)")));
+      await botSay(quickAnswer(q, qVec), tagText(tag, hits.map(d => d.id).join(", ") + (qVec ? " (meaning)" : " (words)")));
     } else await aiAnswer(q, qVec);
   }
   busy = false; sendBtn.disabled = false;
