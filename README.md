@@ -1,96 +1,83 @@
-# Chatbot recruteur de Mattis Fernandez
+# Mattis Fernandez's recruiter chatbot
 
-**En ligne : [chatbot.milo-cat.com](https://chatbot.milo-cat.com)**
+**Try it: [chatbot.milo-cat.com](https://chatbot.milo-cat.com)**
 
-Un assistant conversationnel qui répond aux questions des recruteurs sur le profil de Mattis Fernandez, chef de projet informatique junior, en anglais ou en français. Le recruteur pose ses questions comme à une personne (expérience, compétences, diplôme, disponibilité, salaire…) et obtient une réponse immédiate, puis peut contacter Mattis en un clic.
+A conversational assistant that answers recruiters' questions about the profile of Mattis Fernandez, junior IT project manager, in English or French. Recruiters ask their questions as they would to a person (experience, skills, degree, availability, salary…), get an answer right away, and can then contact Mattis in one click.
 
-L'IA tourne **entièrement dans le navigateur du visiteur**. Il n'y a aucun serveur : les questions et les réponses ne quittent jamais l'appareil, et le modèle est effacé à la fermeture de l'onglet.
+The AI runs **entirely in the visitor's browser**. There is no server: questions and answers never leave the device, and the model is deleted when the tab is closed.
 
-## Le projet
+## The project
 
-### Le but
-Remplacer la lecture d'un CV par une conversation. Un recruteur qui découvre le profil obtient en quelques minutes les réponses qui l'intéressent, sur le poste qu'il cherche à pourvoir, puis est guidé vers la prise de contact (LinkedIn en priorité, ou e-mail).
+### Purpose
+Replace reading a CV with a conversation. A recruiter discovering the profile gets the answers they care about in a few minutes, focused on the position they are hiring for, and is then guided towards getting in touch (LinkedIn first, or email).
 
-### Le parcours du visiteur
-1. **Présentation** : le premier écran explique le but de l'assistant, son fonctionnement et la confidentialité.
-2. **Choix du modèle** : l'application détecte l'appareil et conseille un modèle. Elle prévient que le gros modèle est plus lent et que le petit fait plus d'erreurs. On peut aussi choisir les réponses rapides, sans IA et sans téléchargement.
-3. **Choix de la langue** (anglais ou français) pendant que le modèle se télécharge.
-4. **Poste recherché** : chef de projet, business analyst, product owner, data/BI, ou un intitulé libre. Le visiteur peut aussi juste découvrir le profil.
-5. **Discussion** : un message d'accueil, une présentation adaptée au poste, puis les questions du recruteur. Des suggestions de questions s'affichent après chaque réponse.
-6. **Contact** : après quelques réponses, ou dès que le recruteur parle d'entretien, de salaire ou de disponibilité, une carte de contact apparaît avec un message prêt à envoyer qui mentionne le poste.
+### The visitor's journey
+1. **Introduction**: the first screen explains what the assistant is for, how it works and how privacy is handled.
+2. **Model choice**: the app detects the device and recommends a model. It warns that the large model is slower and the small one makes more mistakes. Visitors can also pick quick answers, with no AI and no download.
+3. **Language choice** (English or French) while the model downloads.
+4. **Position**: project manager, business analyst, product owner, data/BI, or a free-text title. Visitors can also just explore the profile.
+5. **Chat**: a welcome message, a pitch tailored to the position, then the recruiter's questions. Suggested questions appear after each answer.
+6. **Contact**: after a few answers, or as soon as the recruiter mentions an interview, salary or availability, a contact card appears with a ready-to-send message that names the position.
 
-Aux visites suivantes, seule l'étape du poste s'affiche. Le bouton « Modèle et langue » permet de changer ces réglages sans recharger la page.
+On later visits, only the position step is shown. The "Model & language" button changes these settings without reloading the page.
 
 ## Technologies
 
-| Rôle | Technologie |
+| Role | Technology |
 |---|---|
-| Interface | HTML, CSS et JavaScript sans framework, en un seul fichier (`index.html`) |
-| Modèle de langage | [WebLLM](https://github.com/mlc-ai/web-llm) 0.2.84, qui exécute le modèle sur la carte graphique via **WebGPU** |
-| Modèles proposés | Qwen2.5 1.5B Instruct (~1 Go, par défaut), Llama 3.2 3B Instruct (~2 Go), Llama 3.2 1B Instruct (~0,7 Go), quantifiés en 4 bits |
-| Recherche par le sens | [Transformers.js](https://github.com/huggingface/transformers.js) 3.8.1 avec le modèle multilingue `multilingual-e5-small` (~120 Mo) |
-| Recherche par mots-clés | Code maison (`retrieval.js`) : mots-clés, titres et pondération par rareté des mots |
-| Tests | Node.js (`tests/run.mjs`) et GitHub Actions, plus une page de test dans le navigateur (`tests.html`) |
-| Hébergement | GitHub Pages, domaine personnalisé chez OVH |
+| Interface | Plain HTML, CSS and JavaScript, no framework, in a single file (`index.html`) |
+| Language model | [WebLLM](https://github.com/mlc-ai/web-llm) 0.2.84, which runs the model on the graphics card through **WebGPU** |
+| Models offered | Qwen2.5 1.5B Instruct (~1 GB, default), Llama 3.2 3B Instruct (~2 GB), Llama 3.2 1B Instruct (~0.7 GB), 4-bit quantised |
+| Search by meaning | [Transformers.js](https://github.com/huggingface/transformers.js) 3.8.1 with the multilingual `multilingual-e5-small` model (~120 MB) |
+| Keyword search | Custom code (`retrieval.js`): keywords, titles and weighting by word rarity |
+| Tests | Node.js (`tests/run.mjs`) and GitHub Actions, plus an in-browser test page (`tests.html`) |
+| Hosting | GitHub Pages, custom domain registered with OVH |
 
-Les bibliothèques sont chargées depuis le CDN jsDelivr à des versions figées. Les fichiers des modèles viennent de Hugging Face.
+Libraries are loaded from the jsDelivr CDN at pinned versions. Model files come from Hugging Face.
 
-## Spécificités
+## Key features
 
-### Tout en local, rien de conservé
-- Pas de backend, pas de base de données, pas d'outil de statistiques : le site est un ensemble de fichiers statiques.
-- Le modèle est téléchargé dans le navigateur et s'exécute sur la carte graphique du visiteur.
-- Les fichiers du modèle sont effacés du stockage du navigateur dès qu'il est chargé, et les restes d'anciennes visites sont effacés au démarrage. Le modèle de recherche par le sens reste uniquement en mémoire. Rien ne reste donc sur l'appareil après la fermeture de l'onglet.
+### Everything local, nothing kept
+- No backend, no database, no analytics: the site is a set of static files.
+- The model is downloaded into the browser and runs on the visitor's graphics card.
+- Model files are deleted from browser storage as soon as the model is loaded, and leftovers from earlier visits are deleted on start-up. The search-by-meaning model stays in memory only. Nothing remains on the device once the tab is closed.
 
-### Des réponses fiables avec un petit modèle
-Un modèle de 1 à 3 milliards de paramètres peut inventer des faits. Plusieurs mécanismes l'en empêchent :
-- **Génération augmentée par recherche (RAG)** : à chaque question, seuls le résumé du profil et les sections les plus pertinentes sont donnés au modèle, avec la consigne de ne rien inventer et de renvoyer vers Mattis si l'information manque.
-- **Réponses vérifiées** : pour les questions fréquentes, une réponse relue par Mattis est affichée mot pour mot, sans passer par l'IA. Elle est trouvée par la formulation de la question ou, sur ordinateur, par son sens (seuil de similarité calibré à 0,92 sur le jeu de tests).
-- **Recherche hybride** : les classements par mots-clés et par le sens sont fusionnés (*reciprocal rank fusion*), pour qu'un nom d'entreprise tapé tel quel compte toujours.
-- **Garde-fou** : une réponse de l'IA qui cite un nombre, un nom propre, un e-mail ou un lien absent des informations fournies est rejetée et remplacée par l'extrait du profil.
+### Reliable answers from a small model
+A model with 1 to 3 billion parameters can make facts up. Several mechanisms prevent that:
+- **Retrieval-augmented generation (RAG)**: for each question, the model only gets the profile summary and the most relevant sections, with instructions to invent nothing and to refer the recruiter to Mattis when information is missing.
+- **Verified answers**: for frequent questions, an answer reviewed by Mattis is shown word for word, without the AI. It is matched on the question's wording or, on computers, on its meaning (similarity threshold calibrated at 0.92 on the test set).
+- **Hybrid search**: keyword and meaning rankings are merged (reciprocal rank fusion), so a company name typed as is always counts.
+- **Guard**: an AI answer citing a number, proper name, email or link that is not in the information it was given is rejected and replaced by the profile extract.
 
-### Adapté à chaque appareil
-- Sur téléphone ou sur un ordinateur avec peu de mémoire, seul le plus petit modèle est proposé, avec un contexte et des réponses plus courts. Si la page plante faute de mémoire, l'application le détecte au rechargement et propose une solution plus légère.
-- Sans WebGPU, les réponses rapides restent disponibles : elles affichent le passage du profil qui correspond le mieux à la question.
+### Adapted to each device
+- On phones or computers with little memory, only the smallest model is offered, with a shorter context and shorter answers. If the page crashes for lack of memory, the app detects it on reload and offers a lighter option.
+- Without WebGPU, quick answers remain available: they show the profile passage that best matches the question.
 
-### Bilingue
-Toute l'interface, le contenu du profil, les réponses vérifiées et les consignes du modèle existent en anglais et en français. La langue choisie s'applique à tout.
+### Bilingual
+The whole interface, the profile content, the verified answers and the model's instructions exist in English and French. The chosen language applies to everything.
 
-### Une interface vivante
-Les étapes apparaissent en fondu. Les réponses enregistrées s'écrivent mot à mot, comme une réponse générée. Ces animations sont désactivées si le visiteur a demandé moins d'animations dans son système.
+### A lively interface
+Steps fade in. Saved answers are typed out word by word, like a generated answer. These animations are turned off when the visitor's system asks for reduced motion.
 
-### Un tunnel de conversion
-Le chatbot est pensé pour mener à la prise de contact : présentation ciblée selon le poste, suggestions de questions qui mettent en avant les points forts pour ce poste, bouton de contact toujours visible, carte de contact au bon moment et message prêt à copier.
+### A conversion funnel
+The chatbot is designed to lead to contact: a pitch tailored to the position, suggested questions that highlight the strengths relevant to it, an always-visible contact button, a contact card at the right moment and a message ready to copy.
 
-## Structure du dépôt
+## Repository structure
 
-| Fichier | Contenu |
+| File | Content |
 |---|---|
-| `index.html` | Interface, étapes d'accueil, chargement des modèles, tunnel de conversion |
-| `knowledge.js` | Le profil en anglais : résumé, sections, réponses vérifiées (`faq`), présentations par poste (`roles`), textes du tunnel et coordonnées |
-| `knowledge-fr.js` | La même chose en français, avec les mêmes `id` |
-| `retrieval.js` | Recherche par mots-clés et par le sens, réponses vérifiées, garde-fou |
-| `semantic.js` | Chargement du modèle de recherche par le sens |
-| `tests/` | Questions de test et script de mesure |
-| `tests.html` | Mesure de la recherche par le sens dans le navigateur et réglage du seuil |
-| `CNAME` | Domaine personnalisé de GitHub Pages |
+| `index.html` | Interface, onboarding steps, model loading, conversion funnel |
+| `knowledge.js` | The profile in English: summary, sections, verified answers (`faq`), pitches per position (`roles`), funnel texts and contact details |
+| `knowledge-fr.js` | The same in French, with the same `id`s |
+| `retrieval.js` | Keyword and meaning search, verified answers, guard |
+| `semantic.js` | Loading of the search-by-meaning model |
+| `tests/` | Test questions and measurement script |
+| `tests.html` | In-browser measurement of the search by meaning and threshold tuning |
+| `CNAME` | GitHub Pages custom domain |
 
-Le contenu vient uniquement du CV de Mattis et de ses deux mémoires (mémoire professionnel sur ses deux ans d'alternance, mémoire de diplôme sur la finance sans intermédiaires financiers).
+The content comes only from Mattis's CV and his two theses (a professional thesis on his two years of work-study, and a diploma thesis on finance without financial intermediaries).
 
-## Lancer et tester
-
-**En local** : ouvrir `index.html` dans un Chrome, Edge ou Safari récent. Si le navigateur bloque quelque chose, lancer un petit serveur dans le dossier :
-```
-python3 -m http.server 8000
-```
-puis ouvrir http://localhost:8000.
-
-**Tests** :
-- `node tests/run.mjs` mesure la recherche par mots-clés et le garde-fou. Il est lancé automatiquement par GitHub à chaque modification.
-- `tests.html` mesure aussi la recherche par le sens et aide à régler le seuil `FAQ_SEM_MIN` de `retrieval.js`.
-- Ajouter `?debug` à l'adresse du chatbot affiche comment chaque réponse a été trouvée.
-
-## Modifier le contenu
-- Chaque section de `knowledge.js` a un `title`, des `keywords` (mots qui la déclenchent) et un `text` court (150 à 250 mots), car le modèle a une fenêtre de contexte limitée.
-- Toute modification de `knowledge.js` doit être reportée dans `knowledge-fr.js`.
-- Après avoir ajouté des réponses vérifiées, relancer `tests.html` pour vérifier qu'aucune mauvaise réponse n'apparaît.
+## Editing the content
+- Each section of `knowledge.js` has a `title`, `keywords` (words that trigger it) and a short `text` (150 to 250 words), because the model's context window is limited.
+- Any change to `knowledge.js` must be mirrored in `knowledge-fr.js`.
+- After adding verified answers, run `tests.html` again to check that no wrong answer appears.
