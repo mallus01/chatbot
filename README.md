@@ -1,59 +1,83 @@
-# Chatbot recruteur de Mattis
+# Mattis Fernandez's recruiter chatbot
 
-Chatbot for recruiters to get to know me more easily.
+**Try it: [chatbot.milo-cat.com](https://chatbot.milo-cat.com)**
 
-Webapp statique (aucun serveur) qui répond aux recruteurs sur ton profil, en anglais ou en français au choix. Le modèle d'IA tourne **dans le navigateur, sur le GPU de l'appareil** (WebGPU + WebLLM). Les questions ne quittent jamais l'appareil.
+A conversational assistant that answers recruiters' questions about the profile of Mattis Fernandez, junior IT project manager, in English or French. Recruiters ask their questions as they would to a person (experience, skills, degree, availability, salary…), get an answer right away, and can then contact Mattis in one click.
 
-## Fichiers
-- `index.html` : l'interface et la logique (WebLLM chargé depuis le CDN jsDelivr, version 0.2.84 figée).
-- `knowledge.js` : ta base de connaissances en anglais, extraite du CV et des deux mémoires. C'est le fichier à modifier pour corriger ou ajouter une info.
-- `knowledge-fr.js` : la même base en français (mêmes `id`). Quand tu modifies une section dans `knowledge.js`, modifie aussi sa version française.
-- `retrieval.js` : la recherche dans le profil (mots-clés et sens), les réponses vérifiées et le garde-fou.
-- `semantic.js` : le petit modèle de recherche par le sens (multilingual-e5-small, ~120 Mo).
-- `tests/questions.js`, `tests/run.mjs`, `tests.html` : le jeu de tests (voir plus bas).
+The AI runs **entirely in the visitor's browser**. There is no server: questions and answers never leave the device, and the model is deleted when the tab is closed.
 
-## Lancer en local
-Double-clique sur `index.html` (Chrome, Edge ou Safari récents). Si le navigateur bloque quelque chose, lance plutôt un petit serveur dans ce dossier :
-```
-python3 -m http.server 8000
-```
-puis ouvre http://localhost:8000.
+## The project
 
-## Les étapes d'accueil
-Avant le chat, le recruteur passe par 3 étapes :
-1. **Choix du modèle** : l'app détecte l'appareil et conseille un modèle (Équilibré sur ordinateur, Le plus léger sur téléphone). Un avertissement s'affiche pour le gros modèle (réponses plus lentes) et pour le petit (erreurs plus probables). « Réponses rapides uniquement » évite tout téléchargement.
-2. **Choix de la langue** (anglais ou français) pendant que le modèle se télécharge. En français, tout passe en français : interface, réponses rapides et réponses de l'IA.
-3. **Poste recherché** : oui (Chef de projet, Business analyst, Product owner, Data/BI, ou « Autre » avec un champ libre) ou non (il découvre le profil).
-Aux visites suivantes, seule l'étape 3 s'affiche ; le bouton « Modèle et langue » permet de changer les deux.
+### Purpose
+Replace reading a CV with a conversation. A recruiter discovering the profile gets the answers they care about in a few minutes, focused on the position they are hiring for, and is then guided towards getting in touch (LinkedIn first, or email).
 
-## Comment ça marche
-1. **Réponses rapides** dès l'ouverture : l'app cherche la section la plus pertinente de `knowledge.js` et l'affiche (fonctionne partout, même sans GPU).
-2. **Assistant IA** : bouton « Start the AI assistant ». Le modèle est téléchargé en mémoire et ne reste pas sur l'appareil du visiteur : les fichiers sont effacés du stockage du navigateur dès qu'il est chargé, il disparaît donc à la fermeture de l'onglet et se retélécharge à chaque visite. Changer de langue ou de modèle dans les réglages ne recharge plus la page.
-   - Balanced : Qwen2.5 1.5B (~1 Go), par défaut
-   - Best answers : Llama 3.2 3B (~2 Go), meilleure qualité si le GPU suit
-   - Lightest : Llama 3.2 1B (~0,7 Go), pour les petites machines
-   À chaque question, l'app envoie au modèle le résumé du profil + les 3 sections les plus pertinentes, avec des consignes : répondre en anglais, ne rien inventer, renvoyer vers LinkedIn si l'info manque.
-3. Sans WebGPU, un message l'explique et les réponses rapides restent disponibles.
+### The visitor's journey
+1. **Introduction**: the first screen explains what the assistant is for, how it works and how privacy is handled.
+2. **Model choice**: the app detects the device and recommends a model. It warns that the large model is slower and the small one makes more mistakes. Visitors can also pick quick answers, with no AI and no download.
+3. **Language choice** (English or French) while the model downloads.
+4. **Position**: project manager, business analyst, product owner, data/BI, or a free-text title. Visitors can also just explore the profile.
+5. **Chat**: a welcome message, a pitch tailored to the position, then the recruiter's questions. Suggested questions appear after each answer.
+6. **Contact**: after a few answers, or as soon as the recruiter mentions an interview, salary or availability, a contact card appears with a ready-to-send message that names the position.
 
-## Précision des réponses
-- **Réponses vérifiées** (`faq` dans `knowledge.js` et `knowledge-fr.js`) : pour les questions fréquentes, la réponse est affichée mot pour mot, sans l'IA, avec la mention « Réponse vérifiée ». Chaque entrée a des formulations (`q`) et une réponse (`a`). Les boutons de suggestion tombent toujours sur ces réponses.
-- **Garde-fou** : si une réponse de l'IA cite un nombre, un nom, un e-mail ou un lien absent de ce qu'on lui a donné, elle est remplacée par l'extrait du profil.
-- **Recherche par le sens** : sur ordinateur, une fois le modèle d'IA prêt, un petit modèle (~120 Mo) compare le sens de la question aux sections et aux réponses vérifiées. Sans lui (téléphone, réponses rapides), la recherche par mots-clés est utilisée.
-- **Tests** : `node tests/run.mjs` mesure la recherche par mots-clés (lancé aussi automatiquement par GitHub à chaque modification). `tests.html` mesure aussi la recherche par le sens dans le navigateur et aide à régler le seuil `FAQ_SEM_MIN` de `retrieval.js`. Ajoute `?debug` à l'adresse du chatbot pour voir comment chaque réponse a été trouvée.
+On later visits, only the position step is shown. The "Model & language" button changes these settings without reloading the page.
 
-## Modifier le contenu
-Dans `knowledge.js`, chaque section a un `title`, des `keywords` (mots qui déclenchent la section) et un `text`. Garde chaque texte court (150 à 250 mots) : le modèle a une fenêtre de contexte de 4096 tokens.
+## Technologies
 
-## Mettre en ligne (pas fait, à décider)
-Il suffit d'héberger ces deux fichiers sur un hébergement statique en HTTPS : GitHub Pages, Netlify ou Cloudflare Pages (gratuits). Ensuite tu mets le lien sur ton CV et ton LinkedIn.
+| Role | Technology |
+|---|---|
+| Interface | Plain HTML, CSS and JavaScript, no framework, in a single file (`index.html`) |
+| Language model | [WebLLM](https://github.com/mlc-ai/web-llm) 0.2.84, which runs the model on the graphics card through **WebGPU** |
+| Models offered | Qwen2.5 1.5B Instruct (~1 GB, default), Llama 3.2 3B Instruct (~2 GB), Llama 3.2 1B Instruct (~0.7 GB), 4-bit quantised |
+| Search by meaning | [Transformers.js](https://github.com/huggingface/transformers.js) 3.8.1 with the multilingual `multilingual-e5-small` model (~120 MB) |
+| Keyword search | Custom code (`retrieval.js`): keywords, titles and weighting by word rarity |
+| Tests | Node.js (`tests/run.mjs`) and GitHub Actions, plus an in-browser test page (`tests.html`) |
+| Hosting | GitHub Pages, custom domain registered with OVH |
 
-## Tunnel de conversion
-Le but du chatbot : amener le recruteur à demander tes coordonnées.
-1. **Accroche** : message d'accueil qui résume ton profil, puis le pitch du poste choisi à l'étape 3 (ou une invitation à explorer s'il ne recrute pas pour un poste précis). S'il n'a rien choisi, des boutons lui demandent pour quel poste il recrute.
-2. **Pitch ciblé** : 3 raisons concrètes pour lesquelles tu corresponds à ce poste (textes dans `roles` de `knowledge.js`).
-3. **Preuves** : après chaque réponse, des boutons « Next » proposent les questions les plus utiles pour ce poste, avec toujours en premier « Get his contact details ».
-4. **Appel à l'action** : après 3 réponses, ou dès qu'il parle de disponibilité, salaire, entretien, embauche…, une carte « Want to discuss your … opening with him? ».
-5. **Contact** : bouton LinkedIn, email / téléphone / CV s'ils sont renseignés dans `contact`, et un message prêt à envoyer (copiable) qui mentionne le poste. Le bouton « Contact Mattis » en haut y mène à tout moment.
-Avec l'IA activée, le modèle connaît le poste visé et termine chaque réponse par une question qui fait avancer la conversation.
+Libraries are loaded from the jsDelivr CDN at pinned versions. Model files come from Hugging Face.
 
-Pour afficher ton email, ton téléphone ou ton CV : remplis `contact` dans `knowledge.js` (pour le CV, mets le PDF à côté de `index.html` et écris son nom dans `cv`).
+## Key features
+
+### Everything local, nothing kept
+- No backend, no database, no analytics: the site is a set of static files.
+- The model is downloaded into the browser and runs on the visitor's graphics card.
+- Model files are deleted from browser storage as soon as the model is loaded, and leftovers from earlier visits are deleted on start-up. The search-by-meaning model stays in memory only. Nothing remains on the device once the tab is closed.
+
+### Reliable answers from a small model
+A model with 1 to 3 billion parameters can make facts up. Several mechanisms prevent that:
+- **Retrieval-augmented generation (RAG)**: for each question, the model only gets the profile summary and the most relevant sections, with instructions to invent nothing and to refer the recruiter to Mattis when information is missing.
+- **Verified answers**: for frequent questions, an answer reviewed by Mattis is shown word for word, without the AI. It is matched on the question's wording or, on computers, on its meaning (similarity threshold calibrated at 0.92 on the test set).
+- **Hybrid search**: keyword and meaning rankings are merged (reciprocal rank fusion), so a company name typed as is always counts.
+- **Guard**: an AI answer citing a number, proper name, email or link that is not in the information it was given is rejected and replaced by the profile extract.
+
+### Adapted to each device
+- On phones or computers with little memory, only the smallest model is offered, with a shorter context and shorter answers. If the page crashes for lack of memory, the app detects it on reload and offers a lighter option.
+- Without WebGPU, quick answers remain available: they show the profile passage that best matches the question.
+
+### Bilingual
+The whole interface, the profile content, the verified answers and the model's instructions exist in English and French. The chosen language applies to everything.
+
+### A lively interface
+Steps fade in. Saved answers are typed out word by word, like a generated answer. These animations are turned off when the visitor's system asks for reduced motion.
+
+### A conversion funnel
+The chatbot is designed to lead to contact: a pitch tailored to the position, suggested questions that highlight the strengths relevant to it, an always-visible contact button, a contact card at the right moment and a message ready to copy.
+
+## Repository structure
+
+| File | Content |
+|---|---|
+| `index.html` | Interface, onboarding steps, model loading, conversion funnel |
+| `knowledge.js` | The profile in English: summary, sections, verified answers (`faq`), pitches per position (`roles`), funnel texts and contact details |
+| `knowledge-fr.js` | The same in French, with the same `id`s |
+| `retrieval.js` | Keyword and meaning search, verified answers, guard |
+| `semantic.js` | Loading of the search-by-meaning model |
+| `tests/` | Test questions and measurement script |
+| `tests.html` | In-browser measurement of the search by meaning and threshold tuning |
+| `CNAME` | GitHub Pages custom domain |
+
+The content comes only from Mattis's CV and his two theses (a professional thesis on his two years of work-study, and a diploma thesis on finance without financial intermediaries).
+
+## Editing the content
+- Each section of `knowledge.js` has a `title`, `keywords` (words that trigger it) and a short `text` (150 to 250 words), because the model's context window is limited.
+- Any change to `knowledge.js` must be mirrored in `knowledge-fr.js`.
+- After adding verified answers, run `tests.html` again to check that no wrong answer appears.
