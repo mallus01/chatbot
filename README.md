@@ -4,7 +4,7 @@
 
 A conversational assistant that answers recruiters' questions about the profile of Mattis Fernandez, junior IT project manager, in English or French. Recruiters ask their questions as they would to a person (experience, skills, degree, availability, salary…), get an answer right away, and can then contact Mattis in one click.
 
-The AI runs **entirely in the visitor's browser**. There is no server: questions and answers never leave the device, and the model is deleted when the tab is closed.
+The AI runs **entirely in the visitor's browser**. There is no server of its own: questions and answers never leave the device, and the model is deleted when the tab is closed.
 
 ## The project
 
@@ -31,6 +31,7 @@ On later visits, only the position step is shown. The "Model & language" button 
 | Search by meaning | [Transformers.js](https://github.com/huggingface/transformers.js) 3.8.1 with the multilingual `multilingual-e5-small` model (~120 MB) |
 | Keyword search | Custom code (`retrieval.js`): keywords, titles and weighting by word rarity |
 | Tests | Node.js (`tests/run.mjs`) and GitHub Actions, plus an in-browser test page (`tests.html`) |
+| Visitor statistics | [GoatCounter](https://www.goatcounter.com) (open source, no cookies, hosted in the EU) |
 | Hosting | GitHub Pages, custom domain registered with OVH |
 
 Libraries are loaded from the jsDelivr CDN at pinned versions. Model files come from Hugging Face.
@@ -38,9 +39,18 @@ Libraries are loaded from the jsDelivr CDN at pinned versions. Model files come 
 ## Key features
 
 ### Everything local, nothing kept
-- No backend, no database, no analytics: the site is a set of static files.
+- No backend and no database: the site is a set of static files. The only data sent anywhere is an anonymous visit count (see below).
 - The model is downloaded into the browser and runs on the visitor's graphics card.
 - Model files are deleted from browser storage as soon as the model is loaded, and leftovers from earlier visits are deleted on start-up. The search-by-meaning model stays in memory only. Nothing remains on the device once the tab is closed.
+
+### Visitor statistics, GDPR-compliant
+Visits are counted with [GoatCounter](https://www.goatcounter.com), an open-source analytics tool chosen for its respect of the GDPR:
+- **No cookies and nothing stored on the device**, so no consent banner is needed under CNIL rules for this kind of audience measurement.
+- **Anonymous**: only the visit itself is recorded (page, referring site, browser, screen size, country). GoatCounter does not store IP addresses, and its servers are in the EU.
+- **Never the conversation**: the questions, the answers and the position picked are never sent. Click tracking is turned off.
+- **Transparent**: when statistics are on, the privacy text in the footer and on the first screen says so, in English and French.
+
+The GoatCounter code is set in `window.STATS_CODE` at the top of `index.html`. Leaving it empty turns statistics off and the GoatCounter script is not loaded at all.
 
 ### Reliable answers from a small model
 A model with 1 to 3 billion parameters can make facts up. Several mechanisms prevent that:
@@ -66,7 +76,7 @@ The chatbot is designed to lead to contact: a pitch tailored to the position, su
 
 | File | Content |
 |---|---|
-| `index.html` | Interface, onboarding steps, model loading, conversion funnel |
+| `index.html` | Interface, onboarding steps, model loading, conversion funnel, visitor statistics setting (`STATS_CODE`) |
 | `knowledge.js` | The profile in English: summary, sections, verified answers (`faq`), pitches per position (`roles`), funnel texts and contact details |
 | `knowledge-fr.js` | The same in French, with the same `id`s |
 | `retrieval.js` | Keyword and meaning search, verified answers, guard |
