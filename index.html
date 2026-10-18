@@ -81,6 +81,7 @@
   .quote { border-left: 3px solid var(--accent); background: var(--panel); border-radius: 6px; padding: 8px 10px; margin: 8px 0 0; font-size: 14px; }
   #contactTop { flex: none; }
   footer { color: var(--muted); font-size: 12px; text-align: center; }
+  footer a { color: inherit; }
 
   /* Onboarding steps */
   .wizard { flex: 1; min-height: 0; overflow-y: auto; background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 20px; box-shadow: var(--shadow); }
@@ -200,7 +201,7 @@ if (!BASE) {
 // ---------- Interface texts ----------
 const T = {
   en: {
-    title: "Ask about Mattis", contactTop: "Contact Mattis", placeholder: "Ask anything about Mattis's profile…", send: "Send",
+    title: "Ask about Mattis", legal: "Legal notice & privacy", contactTop: "Contact Mattis", placeholder: "Ask anything about Mattis's profile…", send: "Send",
     footer: "The AI runs entirely on your device and is deleted when you close the tab; your questions and the answers are never sent to a server. Answers are generated from Mattis's CV and theses and may contain mistakes.",
     settings: "Model & language", startAi: "Start the AI assistant ({size})", useAi: "Use the AI assistant", retry: "Try again",
     checking: "Checking your device…",
@@ -263,7 +264,7 @@ const T = {
   },
   fr: {
     statsNote: "Pour compter les visites, le site utilise GoatCounter (open source, sans cookie, hébergé dans l'UE) : seule la visite est enregistrée, de façon anonyme (page, site d'origine, navigateur, taille d'écran, pays), jamais vos questions.",
-    title: "Questions sur Mattis", contactTop: "Contacter Mattis", placeholder: "Votre question sur Mattis…", send: "Envoyer",
+    title: "Questions sur Mattis", legal: "Mentions légales et confidentialité", contactTop: "Contacter Mattis", placeholder: "Votre question sur Mattis…", send: "Envoyer",
     footer: "L'IA tourne entièrement sur votre appareil et elle est supprimée à la fermeture de l'onglet : vos questions et les réponses ne sont jamais envoyées à un serveur. Les réponses sont générées à partir du CV et des mémoires de Mattis et peuvent contenir des erreurs.",
     settings: "Modèle et langue", startAi: "Lancer l'assistant IA ({size})", useAi: "Utiliser l'assistant IA", retry: "Réessayer",
     checking: "Analyse de votre appareil…",
@@ -450,6 +451,10 @@ function applyTexts() {
   input.placeholder = t("placeholder"); input.setAttribute("aria-label", t("placeholder"));
   sendBtn.textContent = t("send");
   $("footer").textContent = t("footer") + (STATS ? " " + t("statsNote") : "");
+  const legal = document.createElement("a");
+  legal.href = "legal.html#" + LANG; legal.target = "_blank"; legal.rel = "noopener";
+  legal.textContent = t("legal");
+  $("footer").append(" ", legal);
   $("settingsBtn").textContent = t("settings");
 }
 

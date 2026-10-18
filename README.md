@@ -77,6 +77,7 @@ The chatbot is designed to lead to contact: a pitch tailored to the position, su
 | File | Content |
 |---|---|
 | `index.html` | Interface, onboarding steps, model loading, conversion funnel, visitor statistics setting (`STATS_CODE`) |
+| `legal.html` | Legal notice and privacy policy (French and English), linked from the footer; keep it in line with what the site actually does (statistics, storage, third-party services) |
 | `knowledge.js` | The profile in English: summary, sections, verified answers (`faq`), pitches per position (`roles`), funnel texts and contact details |
 | `knowledge-fr.js` | The same in French, with the same `id`s |
 | `retrieval.js` | Keyword and meaning search, verified answers, guard |
