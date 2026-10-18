@@ -1,6 +1,6 @@
 # Mattis Fernandez's recruiter chatbot
 
-**Try it: [chatbot.milo-cat.com](https://chatbot.milo-cat.com)**
+**Try it: [chatbot.mattisfernandez.com]((https://chatbot.mattisfernandez.com/))**
 
 A conversational assistant that answers recruiters' questions about the profile of Mattis Fernandez, junior IT project manager, in English or French. Recruiters ask their questions as they would to a person (experience, skills, degree, availability, salary…), get an answer right away, and can then contact Mattis in one click.
 
