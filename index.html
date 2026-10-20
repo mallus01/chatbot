@@ -81,7 +81,8 @@
   .quote { border-left: 3px solid var(--accent); background: var(--panel); border-radius: 6px; padding: 8px 10px; margin: 8px 0 0; font-size: 14px; }
   #contactTop { flex: none; }
   footer { color: var(--muted); font-size: 12px; text-align: center; }
-  footer a { color: inherit; }
+  .legal { margin: -4px 0 0; color: var(--muted); font-size: 12px; text-align: center; }
+  .legal a { color: inherit; }
 
   /* Onboarding steps */
   .wizard { flex: 1; min-height: 0; overflow-y: auto; background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 20px; box-shadow: var(--shadow); }
@@ -186,6 +187,8 @@ window.STATS_CODE = "mattis-chatbot";
     </form>
     <footer id="footer"></footer>
   </div>
+  <!-- Outside the chat so it stays visible during the onboarding steps too. -->
+  <p class="legal"><a id="legalLink" href="legal.html" target="_blank" rel="noopener"></a></p>
 </div>
 
 <script type="module">
@@ -451,10 +454,8 @@ function applyTexts() {
   input.placeholder = t("placeholder"); input.setAttribute("aria-label", t("placeholder"));
   sendBtn.textContent = t("send");
   $("footer").textContent = t("footer") + (STATS ? " " + t("statsNote") : "");
-  const legal = document.createElement("a");
-  legal.href = "legal.html#" + LANG; legal.target = "_blank"; legal.rel = "noopener";
-  legal.textContent = t("legal");
-  $("footer").append(" ", legal);
+  $("legalLink").href = "legal.html#" + LANG;
+  $("legalLink").textContent = t("legal");
   $("settingsBtn").textContent = t("settings");
 }
 
